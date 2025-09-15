@@ -1,0 +1,50 @@
+# ================================
+# WordPress Plugin .gitignore
+# ================================
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnp/
+.pnp.js
+
+# Build / Compiled files
+/build/
+/dist/
+/tmp/
+/.cache/
+/coverage/
+/*.log
+
+# System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+desktop.ini
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Composer (if using PHP deps)
+/vendor/
+composer.lock
+
+# WordPress specific
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+
+# Env files
+.env
+.env.local
+.env.*.local
