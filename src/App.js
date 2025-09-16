@@ -13,7 +13,7 @@ const App = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [notice, setNotice] = useState(""); // State for our success/error notice
 
-  // The complete default settings state
+  // The complete default settings state (will add redux later)
   const [settings, setSettings] = useState({
     sales_notification: {
       enabled: true,
