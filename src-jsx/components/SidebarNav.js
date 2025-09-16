@@ -18,6 +18,7 @@ const navItems = [
     title: "Review Displays",
     icon: "dashicons-star-filled",
   },
+  { slug: "customize", title: "Customize", icon: "dashicons-admin-customizer" },
 ];
 
 const SidebarNav = ({ activeTab, onTabClick }) => {

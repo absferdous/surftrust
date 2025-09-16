@@ -14,6 +14,10 @@ const navItems = [{
   slug: "review_displays",
   title: "Review Displays",
   icon: "dashicons-star-filled"
+}, {
+  slug: "customize",
+  title: "Customize",
+  icon: "dashicons-admin-customizer"
 }];
 const SidebarNav = ({
   activeTab,

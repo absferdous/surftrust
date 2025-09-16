@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import Header from "./components/Header";
 import SidebarNav from "./components/SidebarNav"; // New sidebar component
+import CustomizePanel from "./components/CustomizePanel";
 import SalesNotificationPanel from "./components/SalesNotificationPanel/SalesNotificationPanel";
 import StockNotificationPanel from "./components/StockNotificationPanel/StockNotificationPanel";
 import ReviewNotificationPanel from "./components/ReviewNotificationPanel/ReviewNotificationPanel";
@@ -28,6 +29,11 @@ const App = () => {
     review_displays: {
       enabled: true,
       min_rating: 4,
+    },
+    customize: {
+      initial_delay: 3,
+      display_duration: 5,
+      delay_between: 2,
     },
   });
 
@@ -84,8 +90,8 @@ const App = () => {
   };
 
   // --- RENDERING LOGIC ---
+  // --- RENDERING LOGIC ---
   const renderActivePanel = () => {
-    // Use slugs to determine which panel to show
     switch (activeTab) {
       case "low_stock_alert":
         return (
@@ -101,6 +107,13 @@ const App = () => {
             updateSetting={updateSetting}
           />
         );
+      case "customize":
+        return (
+          <CustomizePanel
+            settings={settings.customize}
+            updateSetting={updateSetting}
+          />
+        );
       case "sales_notification":
       default:
         return (
@@ -111,7 +124,6 @@ const App = () => {
         );
     }
   };
-
   if (isLoading) {
     return <div>Loading...</div>; // We can replace this with a nice spinner later
   }

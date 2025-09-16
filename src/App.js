@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import Header from "./components/Header";
 import SidebarNav from "./components/SidebarNav"; // New sidebar component
+import CustomizePanel from "./components/CustomizePanel";
 import SalesNotificationPanel from "./components/SalesNotificationPanel/SalesNotificationPanel";
 import StockNotificationPanel from "./components/StockNotificationPanel/StockNotificationPanel";
 import ReviewNotificationPanel from "./components/ReviewNotificationPanel/ReviewNotificationPanel";
@@ -27,6 +28,11 @@ const App = () => {
     review_displays: {
       enabled: true,
       min_rating: 4
+    },
+    customize: {
+      initial_delay: 3,
+      display_duration: 5,
+      delay_between: 2
     }
   });
 
@@ -77,8 +83,8 @@ const App = () => {
   };
 
   // --- RENDERING LOGIC ---
+  // --- RENDERING LOGIC ---
   const renderActivePanel = () => {
-    // Use slugs to determine which panel to show
     switch (activeTab) {
       case "low_stock_alert":
         return /*#__PURE__*/React.createElement(StockNotificationPanel, {
@@ -88,6 +94,11 @@ const App = () => {
       case "review_displays":
         return /*#__PURE__*/React.createElement(ReviewNotificationPanel, {
           settings: settings.review_displays,
+          updateSetting: updateSetting
+        });
+      case "customize":
+        return /*#__PURE__*/React.createElement(CustomizePanel, {
+          settings: settings.customize,
           updateSetting: updateSetting
         });
       case "sales_notification":
