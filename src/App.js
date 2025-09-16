@@ -32,7 +32,15 @@ const App = () => {
     customize: {
       initial_delay: 3,
       display_duration: 5,
-      delay_between: 2
+      delay_between: 2,
+      border_radius: 6,
+      // Default to slightly rounded corners
+      enable_shadow: true,
+      font_family: "sans-serif",
+      // A safe, default font
+      font_size: 14,
+      // Default font size in pixels
+      animation_style: "fade" // Default to a simple fade
     }
   });
 
