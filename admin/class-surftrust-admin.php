@@ -53,22 +53,24 @@ class Surftrust_Admin
      */
     public function enqueue_scripts($hook)
     {
-        error_log('enqueue_scripts loaded');
-
         if ('toplevel_page_surftrust' !== $hook) {
             return;
         }
 
-        // Use the plugin URL constant to get the correct path
+        // --- START FIX ---
+
+        // 1. Enqueue the WordPress components stylesheet
+        wp_enqueue_style('wp-components');
+
+        // 2. Add 'wp-components' to the dependency array for our script
         wp_enqueue_script(
             'surftrust-admin-app-script',
-            plugin_dir_url(__FILE__) . '../build/index.js', // CHANGED PATH
-            array('wp-element', 'wp-api-fetch'),
-            filemtime(plugin_dir_path(__FILE__) . '../build/index.js'), // Auto-versioning
+            plugin_dir_url(__FILE__) . '../build/index.js',
+            array('wp-element', 'wp-api-fetch', 'wp-components'), // <-- DEPENDENCY ADDED HERE
+            filemtime(plugin_dir_path(__FILE__) . '../build/index.js'),
             true
         );
 
-        // For debugging, log the URL being used
-        error_log('Loading script from: ' . SURFTRUST_PLUGIN_URL . 'admin/js/surftrust-admin-bundle.js');
+        // --- END FIX ---
     }
 }

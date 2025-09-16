@@ -15,14 +15,17 @@ const App = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   // This is our single source of truth for all settings.
+  // In /src-jsx/App.js, inside the useState for settings
+
   const [settings, setSettings] = useState({
     sales_notification: {
-      // Note: Corrected from sales_notifications to match DB
       enabled: true,
-      message: "Someone in {city} just bought {product_name}!"
+      message: "Someone in {city} just bought {product_name}!",
+      color: "#227124",
+      // <-- ADD THIS (default green)
+      position: "bottom-left" // <-- ADD THIS
     },
     low_stock_alert: {
-      // Note: Corrected from low_stock_alerts to match DB
       enabled: false,
       threshold: 5
     },
