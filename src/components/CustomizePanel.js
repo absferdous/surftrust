@@ -2,6 +2,7 @@ import React from "react";
 import TimingSettings from "./customize/TimingSettings";
 import BrandingSettings from "./customize/BrandingSettings";
 import FontAnimationSettings from "./customize/FontAnimationSettings";
+import AdvancedDisplayRules from "./customize/AdvancedDisplayRules";
 const CustomizePanel = ({
   settings,
   updateSetting
@@ -20,6 +21,9 @@ const CustomizePanel = ({
     settings: settings,
     updateSetting: updateSetting
   }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(FontAnimationSettings, {
+    settings: settings,
+    updateSetting: updateSetting
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(AdvancedDisplayRules, {
     settings: settings,
     updateSetting: updateSetting
   }));

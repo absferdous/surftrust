@@ -2,7 +2,7 @@ import React from "react";
 import TimingSettings from "./customize/TimingSettings";
 import BrandingSettings from "./customize/BrandingSettings";
 import FontAnimationSettings from "./customize/FontAnimationSettings";
-
+import AdvancedDisplayRules from "./customize/AdvancedDisplayRules";
 const CustomizePanel = ({ settings, updateSetting }) => {
   if (!settings) {
     return <div className="surftrust-panel">Loading...</div>;
@@ -26,6 +26,8 @@ const CustomizePanel = ({ settings, updateSetting }) => {
         settings={settings}
         updateSetting={updateSetting}
       />
+      <hr />
+      <AdvancedDisplayRules settings={settings} updateSetting={updateSetting} />
     </div>
   );
 };

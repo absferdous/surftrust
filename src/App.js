@@ -46,7 +46,9 @@ const App = () => {
       // Default to white background
       font_color: "#000000",
       // Default to black text
-      show_close_button: true // Default to showing the close button
+      show_close_button: true,
+      // Default to showing the close button
+      enable_on_mobile: true
     }
   });
 
