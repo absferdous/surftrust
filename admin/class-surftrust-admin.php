@@ -51,26 +51,33 @@ class Surftrust_Admin
     /**
      * Enqueue scripts and styles for the admin area.
      */
+    // In /surftrust/admin/class-surftrust-admin.php
     public function enqueue_scripts($hook)
     {
         if ('toplevel_page_surftrust' !== $hook) {
             return;
         }
 
-        // --- START FIX ---
-
-        // 1. Enqueue the WordPress components stylesheet
+        // Enqueue the WordPress components stylesheet
         wp_enqueue_style('wp-components');
 
-        // 2. Add 'wp-components' to the dependency array for our script
+        // --- ADD THIS LINE ---
+        // Enqueue our custom admin stylesheet
+        wp_enqueue_style(
+            'surftrust-admin-styles',
+            plugin_dir_url(__FILE__) . 'css/surftrust-admin.css',
+            array(), // No dependencies
+            $this->version
+        );
+        // --- END ADDITION ---
+
+        // Add 'wp-components' to the dependency array for our script
         wp_enqueue_script(
             'surftrust-admin-app-script',
             plugin_dir_url(__FILE__) . '../build/index.js',
-            array('wp-element', 'wp-api-fetch', 'wp-components'), // <-- DEPENDENCY ADDED HERE
+            array('wp-element', 'wp-api-fetch', 'wp-components'),
             filemtime(plugin_dir_path(__FILE__) . '../build/index.js'),
             true
         );
-
-        // --- END FIX ---
     }
 }

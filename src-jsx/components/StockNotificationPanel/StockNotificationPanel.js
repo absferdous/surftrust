@@ -1,17 +1,13 @@
-// /src-jsx/components/StockNotificationPanel.js
-
 import React from "react";
-// Import the UI components we need
 import { ToggleControl, TextControl } from "@wordpress/components";
 
 const StockNotificationPanel = ({ settings, updateSetting }) => {
-  // Safety check
   if (!settings) {
-    return <div>Loading...</div>;
+    return <div className="surftrust-panel">Loading...</div>;
   }
 
   return (
-    <div>
+    <div className="surftrust-panel">
       <h2>Low Stock Alert Settings</h2>
       <p>
         Notify customers when product inventory is running low to create
@@ -20,7 +16,6 @@ const StockNotificationPanel = ({ settings, updateSetting }) => {
 
       <hr />
 
-      {/* == ENABLE/DISABLE TOGGLE == */}
       <ToggleControl
         label="Enable Low Stock Alerts"
         help={
@@ -34,14 +29,12 @@ const StockNotificationPanel = ({ settings, updateSetting }) => {
 
       <hr />
 
-      {/* == STOCK THRESHOLD NUMBER INPUT == */}
       <TextControl
         label="Stock Threshold"
         type="number"
         help="Show alert when a product's stock is at or below this number."
         value={settings.threshold}
         onChange={(value) => {
-          // Ensure the value is a positive integer
           const intValue = parseInt(value, 10);
           updateSetting(
             "low_stock_alert",

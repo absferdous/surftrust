@@ -1,18 +1,16 @@
-// /src-jsx/components/SalesNotificationPanel.js
-
 import React from "react";
-// Import the new UI components we need
 import { ToggleControl, TextareaControl, ColorPalette, SelectControl } from "@wordpress/components";
 const SalesNotificationPanel = ({
   settings,
   updateSetting
 }) => {
-  // Check if settings object exists to prevent errors
   if (!settings) {
-    return /*#__PURE__*/React.createElement("div", null, "Loading...");
+    return /*#__PURE__*/React.createElement("div", {
+      className: "surftrust-panel"
+    }, "Loading...");
   }
 
-  // Define the color palette for the color picker. These are default WordPress colors.
+  // Define the color palette for the color picker
   const colors = [{
     name: "Black",
     color: "#000000"
@@ -29,7 +27,9 @@ const SalesNotificationPanel = ({
     name: "Blue",
     color: "#345cde"
   }];
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", null, "Sales Notification Settings"), /*#__PURE__*/React.createElement("p", null, "Customize the appearance of recent sales pop-ups."), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(ToggleControl, {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "surftrust-panel"
+  }, /*#__PURE__*/React.createElement("h2", null, "Sales Notification Settings"), /*#__PURE__*/React.createElement("p", null, "Customize the appearance of recent sales pop-ups."), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(ToggleControl, {
     label: "Enable Sales Notifications",
     help: settings.enabled ? "Notifications are currently active." : "Notifications are currently disabled.",
     checked: settings.enabled,

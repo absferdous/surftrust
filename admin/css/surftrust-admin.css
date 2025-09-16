@@ -1,0 +1,60 @@
+/* /surftrust/admin/css/surftrust-admin.css */
+
+/* Main App Wrapper - Flexbox Layout */
+.surftrust-app-wrapper {
+  display: flex;
+  gap: 20px; /* Space between sidebar and content */
+}
+
+/* Sidebar Navigation */
+.surftrust-sidebar-nav {
+  flex: 0 0 200px; /* Do not grow, do not shrink, base width 200px */
+  background: #f0f0f1;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.surftrust-sidebar-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.surftrust-sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #1d2327;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.surftrust-sidebar-nav a:hover {
+  background-color: #e0e0e1;
+}
+
+/* Style for the active navigation link */
+.surftrust-sidebar-nav a.is-active {
+  background-color: #2271b1;
+  color: #fff;
+}
+
+/* Main Content Area */
+.surftrust-main-content {
+  flex-grow: 1; /* Take up the remaining space */
+}
+
+/* The white box for settings panels */
+.surftrust-panel {
+  background-color: #fff;
+  border: 1px solid #ccd0d4;
+  padding: 20px;
+}
+
+/* WordPress Notices for Feedback */
+.surftrust-notice {
+  margin-bottom: 20px;
+}

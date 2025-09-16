@@ -1,23 +1,18 @@
-// /src-jsx/components/ReviewNotificationPanel.js
-
 import React from "react";
-// Import the UI components we need
 import { ToggleControl, RangeControl } from "@wordpress/components";
 
 const ReviewNotificationPanel = ({ settings, updateSetting }) => {
-  // Safety check
   if (!settings) {
-    return <div>Loading...</div>;
+    return <div className="surftrust-panel">Loading...</div>;
   }
 
   return (
-    <div>
+    <div className="surftrust-panel">
       <h2>Customer Review Display Settings</h2>
       <p>Showcase positive customer reviews to build trust and social proof.</p>
 
       <hr />
 
-      {/* == ENABLE/DISABLE TOGGLE == */}
       <ToggleControl
         label="Enable Review Displays"
         help={
@@ -31,7 +26,6 @@ const ReviewNotificationPanel = ({ settings, updateSetting }) => {
 
       <hr />
 
-      {/* == MINIMUM RATING SLIDER == */}
       <RangeControl
         label="Minimum Rating to Display"
         help="Only show reviews that have a rating of this number or higher."

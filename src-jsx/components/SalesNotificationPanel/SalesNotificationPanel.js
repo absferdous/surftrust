@@ -1,7 +1,4 @@
-// /src-jsx/components/SalesNotificationPanel.js
-
 import React from "react";
-// Import the new UI components we need
 import {
   ToggleControl,
   TextareaControl,
@@ -10,12 +7,11 @@ import {
 } from "@wordpress/components";
 
 const SalesNotificationPanel = ({ settings, updateSetting }) => {
-  // Check if settings object exists to prevent errors
   if (!settings) {
-    return <div>Loading...</div>;
+    return <div className="surftrust-panel">Loading...</div>;
   }
 
-  // Define the color palette for the color picker. These are default WordPress colors.
+  // Define the color palette for the color picker
   const colors = [
     { name: "Black", color: "#000000" },
     { name: "White", color: "#ffffff" },
@@ -25,7 +21,7 @@ const SalesNotificationPanel = ({ settings, updateSetting }) => {
   ];
 
   return (
-    <div>
+    <div className="surftrust-panel">
       <h2>Sales Notification Settings</h2>
       <p>Customize the appearance of recent sales pop-ups.</p>
 
@@ -58,7 +54,6 @@ const SalesNotificationPanel = ({ settings, updateSetting }) => {
 
       <hr />
 
-      {/* == NEW: COLOR PICKER == */}
       <label
         style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}
       >
@@ -79,7 +74,6 @@ const SalesNotificationPanel = ({ settings, updateSetting }) => {
 
       <hr />
 
-      {/* == NEW: POSITION DROPDOWN == */}
       <SelectControl
         label="Notification Position"
         value={settings.position}
