@@ -40,7 +40,13 @@ const App = () => {
       // A safe, default font
       font_size: 14,
       // Default font size in pixels
-      animation_style: "fade" // Default to a simple fade
+      animation_style: "fade",
+      // Default to a simple fade
+      background_color: "#ffffff",
+      // Default to white background
+      font_color: "#000000",
+      // Default to black text
+      show_close_button: true // Default to showing the close button
     }
   });
 

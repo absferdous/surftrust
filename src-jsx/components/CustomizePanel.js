@@ -5,6 +5,7 @@ import {
   ToggleControl,
   SelectControl,
 } from "@wordpress/components";
+import AdvancedColorPicker from "./AdvancedColorPicker"; // Import our new reusable component
 
 const CustomizePanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -26,7 +27,6 @@ const CustomizePanel = ({ settings, updateSetting }) => {
       </p>
 
       <hr />
-
       <h3>Timing & Display Logic</h3>
 
       <TextControl
@@ -54,7 +54,6 @@ const CustomizePanel = ({ settings, updateSetting }) => {
       />
 
       <hr />
-
       <h3>Appearance & Branding</h3>
 
       <RangeControl
@@ -62,8 +61,8 @@ const CustomizePanel = ({ settings, updateSetting }) => {
         help="Controls how rounded the corners of the pop-up are."
         value={settings.border_radius}
         onChange={(value) => updateSetting("customize", "border_radius", value)}
-        min={0} // Sharp corners
-        max={50} // Pill-shaped
+        min={0}
+        max={50}
         step={1}
       />
 
@@ -79,7 +78,6 @@ const CustomizePanel = ({ settings, updateSetting }) => {
       />
 
       <hr />
-
       <SelectControl
         label="Font Family"
         value={settings.font_family}
@@ -114,6 +112,32 @@ const CustomizePanel = ({ settings, updateSetting }) => {
         ]}
         onChange={(value) =>
           updateSetting("customize", "animation_style", value)
+        }
+      />
+
+      <hr />
+      {/* This section now uses our new, more powerful component */}
+      <div style={{ display: "flex", gap: "40px", marginBottom: "20px" }}>
+        <AdvancedColorPicker
+          label="Background Color"
+          color={settings.background_color}
+          onChange={(value) =>
+            updateSetting("customize", "background_color", value)
+          }
+        />
+        <AdvancedColorPicker
+          label="Font Color"
+          color={settings.font_color}
+          onChange={(value) => updateSetting("customize", "font_color", value)}
+        />
+      </div>
+
+      <ToggleControl
+        label="Show 'Close' Button"
+        help="Allow users to dismiss a notification by clicking an 'X' icon."
+        checked={settings.show_close_button}
+        onChange={(value) =>
+          updateSetting("customize", "show_close_button", value)
         }
       />
     </div>

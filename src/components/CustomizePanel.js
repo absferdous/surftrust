@@ -1,5 +1,7 @@
 import React from "react";
 import { TextControl, RangeControl, ToggleControl, SelectControl } from "@wordpress/components";
+import AdvancedColorPicker from "./AdvancedColorPicker"; // Import our new reusable component
+
 const CustomizePanel = ({
   settings,
   updateSetting
@@ -41,10 +43,8 @@ const CustomizePanel = ({
     help: "Controls how rounded the corners of the pop-up are.",
     value: settings.border_radius,
     onChange: value => updateSetting("customize", "border_radius", value),
-    min: 0 // Sharp corners
-    ,
-    max: 50 // Pill-shaped
-    ,
+    min: 0,
+    max: 50,
     step: 1
   }), /*#__PURE__*/React.createElement(ToggleControl, {
     label: "Enable Shadow",
@@ -94,6 +94,25 @@ const CustomizePanel = ({
       value: "zoom"
     }],
     onChange: value => updateSetting("customize", "animation_style", value)
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: "40px",
+      marginBottom: "20px"
+    }
+  }, /*#__PURE__*/React.createElement(AdvancedColorPicker, {
+    label: "Background Color",
+    color: settings.background_color,
+    onChange: value => updateSetting("customize", "background_color", value)
+  }), /*#__PURE__*/React.createElement(AdvancedColorPicker, {
+    label: "Font Color",
+    color: settings.font_color,
+    onChange: value => updateSetting("customize", "font_color", value)
+  })), /*#__PURE__*/React.createElement(ToggleControl, {
+    label: "Show 'Close' Button",
+    help: "Allow users to dismiss a notification by clicking an 'X' icon.",
+    checked: settings.show_close_button,
+    onChange: value => updateSetting("customize", "show_close_button", value)
   }));
 };
 export default CustomizePanel;
