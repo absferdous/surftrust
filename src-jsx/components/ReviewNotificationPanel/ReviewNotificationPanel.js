@@ -1,6 +1,6 @@
 import React from "react";
 
-const ReviewNotificationPanel = () => {
+const ReviewNotificationPanel = ({ settings, updateSetting }) => {
   return (
     <div>
       <h2>Customer Review Display Settings</h2>

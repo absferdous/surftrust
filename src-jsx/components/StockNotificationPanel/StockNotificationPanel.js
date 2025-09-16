@@ -1,6 +1,6 @@
 import React from "react";
 
-const StockNotificationPanel = () => {
+const StockNotificationPanel = ({ settings, updateSetting }) => {
   return (
     <div>
       <h2>Low Stock Alert Settings</h2>

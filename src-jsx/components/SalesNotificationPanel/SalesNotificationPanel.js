@@ -1,6 +1,8 @@
+// /src-jsx/components/SalesNotificationPanel.js
+
 import React from "react";
 
-const SalesNotificationPanel = () => {
+const SalesNotificationPanel = ({ settings, updateSetting }) => {
   return (
     <div>
       <h2>Sales Notification Settings</h2>

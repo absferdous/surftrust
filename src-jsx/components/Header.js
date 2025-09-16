@@ -1,6 +1,9 @@
+// /src-jsx/components/Header.js
+
 import React from "react";
 
-const Header = () => {
+// We now receive props: onSave function and isSaving state.
+const Header = ({ onSave, isSaving }) => {
   return (
     <header
       style={{
@@ -11,7 +14,13 @@ const Header = () => {
       }}
     >
       <h1>Surftrust Settings</h1>
-      <button className="button button-primary">Save Changes</button>
+      <button
+        className="button button-primary"
+        onClick={onSave} // Call the passed-in onSave function when clicked
+        disabled={isSaving} // Disable the button while saving
+      >
+        {isSaving ? "Saving..." : "Save Changes"}
+      </button>
     </header>
   );
 };
