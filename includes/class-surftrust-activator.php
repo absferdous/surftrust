@@ -20,6 +20,7 @@ class Surftrust_Activator
     {
         // Debugging: Call the method to create the custom database table.
         self::create_settings_table();
+        self::create_analytics_table();
     }
 
     /**
@@ -44,6 +45,24 @@ class Surftrust_Activator
 		) $charset_collate;";
 
         // Debugging: We need dbDelta to intelligently create/update the table.
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+    }
+    private static function create_analytics_table()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'surftrust_analytics';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE $table_name (
+        id BIGINT(20) NOT NULL AUTO_INCREMENT,
+        event_type VARCHAR(10) NOT NULL,
+        notification_type VARCHAR(20) NOT NULL,
+        product_id BIGINT(20) UNSIGNED DEFAULT 0,
+        timestamp DATETIME NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }

@@ -17,7 +17,10 @@ class Surftrust_Api_Manager
         // Debugging: Require the controller classes that contain the callback logic.
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-settings-controller.php';
 
+
         $settings_controller = new Surftrust_Settings_Controller();
+        require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-public-controller.php';
+        $public_controller = new Surftrust_Public_Controller();
 
         // Debugging: Register the route for getting and saving settings.
         // The namespace 'surftrust/v1' keeps our routes organized.
@@ -34,6 +37,24 @@ class Surftrust_Api_Manager
                 'callback'            => array($settings_controller, 'save_settings'),
                 'permission_callback' => array($this, 'admin_permissions_check'),
             ),
+        ));
+        // Endpoint to get all data needed for notifications
+        register_rest_route('surftrust/v1', '/public/data', array(
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => array($public_controller, 'get_notification_data'),
+            'permission_callback' => '__return_true', // Publicly accessible
+        ));
+        // Endpoint to track a "view" event
+        register_rest_route('surftrust/v1', '/track/view', array(
+            'methods'  => WP_REST_Server::CREATABLE, // POST request
+            'callback' => array($public_controller, 'track_view'),
+            'permission_callback' => '__return_true',
+        ));
+        // Endpoint to track a "click" event
+        register_rest_route('surftrust/v1', '/track/click', array(
+            'methods'  => WP_REST_Server::CREATABLE, // POST request
+            'callback' => array($public_controller, 'track_click'),
+            'permission_callback' => '__return_true',
         ));
     }
 

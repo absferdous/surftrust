@@ -29,6 +29,7 @@ class Surftrust_Loader
         // Debugging: Define all hooks that need to be registered.
         $this->define_admin_hooks();
         $this->define_api_hooks();
+        $this->define_public_hooks();
     }
 
     private function load_dependencies()
@@ -37,6 +38,7 @@ class Surftrust_Loader
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'admin/class-surftrust-admin.php';
         // API-related files
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-api-manager.php';
+        require_once SURFTRUST_PLUGIN_DIR_PATH . 'public/class-surftrust-public.php';
     }
 
     private function define_admin_hooks()
@@ -63,11 +65,10 @@ class Surftrust_Loader
      */
     private function define_public_hooks()
     {
-        // For example:
-        // $plugin_public = new Surftrust_Public( $this->get_plugin_name(), $this->get_version() );
-        // add_action( 'wp_enqueue_scripts', array( $plugin_public, 'enqueue_scripts' ) );
+        $plugin_public = new Surftrust_Public($this->plugin_name, $this->version);
+        // The 'wp_enqueue_scripts' hook is for the PUBLIC side of the site.
+        add_action('wp_enqueue_scripts', array($plugin_public, 'enqueue_scripts'));
     }
-
     public function run()
     {
         // This class doesn't need a run method since hooks are registered directly

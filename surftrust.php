@@ -36,7 +36,8 @@ define('SURFTRUST_PLUGIN_URL', plugin_dir_url(__FILE__));
  */
 function activate_surftrust()
 {
-    require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/class-surftrust-activator.php';
+    // --- CORRECTED PATH AND LOGIC ---
+    require_once plugin_dir_path(__FILE__) . 'includes/class-surftrust-activator.php';
     Surftrust_Activator::activate();
 }
 
@@ -46,7 +47,8 @@ function activate_surftrust()
  */
 function deactivate_surftrust()
 {
-    require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/class-surftrust-deactivator.php';
+    // --- CORRECTED PATH ---
+    require_once plugin_dir_path(__FILE__) . 'includes/class-surftrust-deactivator.php';
     Surftrust_Deactivator::deactivate();
 }
 
