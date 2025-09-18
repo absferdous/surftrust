@@ -21,7 +21,7 @@ class Surftrust_Public_Controller
         $data = [
             'sales'   => $this->get_recent_sales(),
             'reviews' => $this->get_recent_reviews(),
-            'stock'   => [], // Placeholder for low stock logic
+            'stock'   => $this->get_low_stock_products()
         ];
 
         return new WP_REST_Response($data, 200);
@@ -117,6 +117,7 @@ class Surftrust_Public_Controller
             }
 
             $sales[] = [
+                'customer_name' => $order->get_billing_first_name(),
                 'product_name'      => $first_item->get_name(),
                 'product_id'        => $product_id,
                 'city'              => $order->get_billing_city(),
@@ -157,5 +158,55 @@ class Surftrust_Public_Controller
             ];
         }
         return $reviews;
+    }
+    private function get_low_stock_products()
+    {
+        global $wpdb;
+
+        // Fetch the threshold from our saved settings.
+        // This is a direct, efficient way to get a single setting value.
+        $option_value = $wpdb->get_var("SELECT setting_value FROM {$wpdb->prefix}surftrust_settings WHERE setting_name = 'low_stock_alert'");
+        $settings = json_decode($option_value, true);
+        $threshold = isset($settings['threshold']) ? absint($settings['threshold']) : 5; // Default to 5 if not set
+
+        $products = [];
+        $args = array(
+            'post_type'      => 'product',
+            'posts_per_page' => 10,
+            'meta_query'     => array(
+                'relation' => 'AND',
+                array(
+                    'key'     => '_manage_stock',
+                    'value'   => 'yes',
+                ),
+                array(
+                    'key'     => '_stock',
+                    'value'   => $threshold,
+                    'compare' => '<=',
+                    'type'    => 'NUMERIC',
+                ),
+                array(
+                    'key'     => '_stock_status',
+                    'value'   => 'instock',
+                ),
+            ),
+        );
+        $query = new WP_Query($args);
+
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $product = wc_get_product(get_the_ID());
+                $products[] = [
+                    'product_name'      => $product->get_name(),
+                    'product_id'        => $product->get_id(),
+                    'stock_count'       => $product->get_stock_quantity(),
+                    'product_image_url' => wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
+                    'product_url'       => $product->get_permalink(),
+                ];
+            }
+        }
+        wp_reset_postdata();
+        return $products;
     }
 }

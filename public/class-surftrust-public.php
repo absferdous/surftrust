@@ -20,6 +20,12 @@ class Surftrust_Public
             $this->version,
             true // Load in footer
         );
+        wp_enqueue_style(
+            $this->plugin_name . '-public',
+            plugin_dir_url(__FILE__) . 'css/surftrust-public.css',
+            array(),
+            $this->version
+        );
 
         // Fetch ALL our settings from the database
         global $wpdb;
