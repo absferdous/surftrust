@@ -107,3 +107,9 @@
 .surftrust-close-btn:hover {
   opacity: 1;
 }
+/* Add this to surftrust-public.css */
+.surftrust-click-area {
+  display: contents; /* This makes the <a> behave like it's not there for layout */
+  text-decoration: none;
+  color: inherit;
+}

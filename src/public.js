@@ -30,10 +30,8 @@
 
   /**
    * Builds the master queue from the fetched data based on settings.
-   * @param {object} data - The data object from the API (contains sales, reviews, stock).
    */
   function buildQueue(data) {
-    // Add sales notifications if enabled
     if (settings.sales_notification?.enabled && data.sales) {
       data.sales.forEach(sale => {
         notificationQueue.push({
@@ -42,11 +40,8 @@
         });
       });
     }
-
-    // Add review notifications if enabled
     if (settings.review_displays?.enabled && data.reviews) {
       data.reviews.forEach(review => {
-        // Apply the minimum rating filter
         if (review.rating >= (settings.review_displays.min_rating || 1)) {
           notificationQueue.push({
             type: "review",
@@ -63,7 +58,6 @@
         });
       });
     }
-    // Shuffle the queue to make it feel more random and dynamic
     shuffleArray(notificationQueue);
   }
 
@@ -87,11 +81,9 @@
 
   /**
    * Creates, styles, and displays a notification pop-up.
-   * @param {object} notification - The notification object from the queue.
    */
   function showNotification(notification) {
     return new Promise(async resolve => {
-      // If a notification is already visible, hide it before showing the next one.
       if (currentNotificationElement) {
         await hideNotification();
       }
@@ -106,11 +98,12 @@
       applyStyles(notificationEl);
       document.body.appendChild(notificationEl);
       currentNotificationElement = notificationEl;
-
-      // Add event listeners
-      if (notification.data.product_url) {
-        notificationEl.style.cursor = "pointer";
-        notificationEl.addEventListener("click", () => handleNotificationClick(notification));
+      const clickArea = notificationEl.querySelector(".surftrust-click-area");
+      if (clickArea) {
+        clickArea.addEventListener("click", e => {
+          e.preventDefault();
+          handleNotificationClick(notification);
+        });
       }
       const closeBtn = notificationEl.querySelector(".surftrust-close-btn");
       if (closeBtn) {
@@ -119,13 +112,11 @@
           hideNotification();
         });
       }
-
-      // Trigger the animation
       setTimeout(() => {
         notificationEl.classList.add("is-visible");
         trackEvent("view", notification);
         resolve();
-      }, 100); // Small delay to allow CSS transitions to work
+      }, 100);
     });
   }
 
@@ -137,15 +128,13 @@
       if (currentNotificationElement) {
         const el = currentNotificationElement;
         el.classList.remove("is-visible");
-        // Wait for the fade-out animation to finish before removing
         setTimeout(() => {
           el.remove();
-          // Ensure we don't try to remove an element that was already removed
           if (currentNotificationElement === el) {
             currentNotificationElement = null;
           }
           resolve();
-        }, 500); // This should match the transition duration in the CSS
+        }, 500);
       } else {
         resolve();
       }
@@ -154,8 +143,6 @@
 
   /**
    * Generates the inner HTML for a notification based on its type.
-   * @param {object} notification - The notification object.
-   * @returns {string} The HTML string.
    */
   function renderNotificationHTML(notification) {
     const {
@@ -168,39 +155,38 @@
     switch (type) {
       case "sale":
         message = settings.sales_notification?.message || "{product_name} was just purchased!";
-        message = message.replace("{product_name}", `<strong>${data.product_name}</strong>`);
         message = message.replace("{first_name}", data.customer_name || "Someone");
+        message = message.replace("{product_name}", `<strong>${data.product_name}</strong>`);
         message = message.replace("{city}", data.city || "somewhere");
         break;
       case "review":
         message = `<strong>${data.reviewer_name || "Someone"}</strong> left a ${data.rating}-star review for <strong>${data.product_name}</strong>!`;
         break;
-      //stock
       case "stock":
         message = `Hurry! Only <strong>${data.stock_count}</strong> of <strong>${data.product_name}</strong> left in stock!`;
         meta = "Limited stock available";
         break;
       default:
         return "";
-      // Don't render unknown types
     }
-    const closeBtnHtml = settings.customize?.show_close_button ? '<button class="surftrust-close-btn">&times;</button>' : "";
+    const closeBtnHtml = settings.customize?.show_close_button ? `<button class="surftrust-close-btn">&times;</button>` : "";
     const imageHtml = imageUrl ? `<div class="surftrust-image"><img src="${imageUrl}" alt="${data.product_name}"></div>` : "";
     return `
-            <div class="surftrust-notification-wrapper">
-                ${closeBtnHtml}
-                ${imageHtml}
-                <div class="surftrust-content">
-                    <p>${message}</p>
-                    <p class="meta">${meta}</p>
-                </div>
+      <div class="surftrust-notification-wrapper">
+        <a href="${data.product_url || "#"}" class="surftrust-click-area">
+            ${closeBtnHtml}
+            ${imageHtml}
+            <div class="surftrust-content">
+                <p>${message}</p>
+                <p class="meta">${meta}</p>
             </div>
-        `;
+        </a>
+      </div>
+    `;
   }
 
   /**
    * Applies dynamic styles from settings to the notification element.
-   * @param {HTMLElement} el - The notification element.
    */
   function applyStyles(el) {
     const customize = settings.customize || {};
@@ -212,26 +198,38 @@
     if (customize.enable_shadow) {
       el.style.boxShadow = "0 5px 15px rgba(0,0,0,0.1)";
     }
-
-    // Add position and animation classes
     const position = settings.sales_notification?.position || "bottom-left";
     el.classList.add(`surftrust-position-${position}`);
     el.classList.add(`surftrust-animation-${customize.animation_style || "fade"}`);
   }
 
   // --- 5. ANALYTICS TRACKING ---
-  function handleNotificationClick(notification) {
-    trackEvent("click", notification);
-    if (notification.data.product_url) {
-      window.location.href = notification.data.product_url;
+
+  // --- START CHANGE 1: Make handleNotificationClick async ---
+  async function handleNotificationClick(notification) {
+    try {
+      // Wait for the tracking request to complete before redirecting
+      await trackEvent("click", notification);
+    } catch (error) {
+      console.error("Click tracking failed, but proceeding with navigation.", error);
+    } finally {
+      // This 'finally' block ensures the redirect happens even if tracking fails.
+      if (notification.data.product_url) {
+        window.location.href = notification.data.product_url;
+      }
     }
   }
+  // --- END CHANGE 1 ---
+
+  // --- START CHANGE 2: Return the fetch promise ---
   function trackEvent(eventType, notification) {
     const payload = {
       notification_type: notification.type,
       product_id: notification.data.product_id || 0
     };
-    fetch(`${apiUrl}/track/${eventType}`, {
+
+    // Add 'return' so we can await this function's completion
+    return fetch(`${apiUrl}/track/${eventType}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -239,11 +237,12 @@
       body: JSON.stringify(payload)
     }).catch(err => console.error(`Surftrust: Failed to track ${eventType}`, err));
   }
+  // --- END CHANGE 2 ---
 
   // --- 6. HELPER FUNCTIONS ---
+
   /**
    * Shuffles an array in place.
-   * @param {Array} array The array to shuffle.
    */
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -254,7 +253,6 @@
 
   /**
    * A helper to wait for a specific amount of time.
-   * @param {number} ms - The number of milliseconds to wait.
    */
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 })();

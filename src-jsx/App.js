@@ -6,6 +6,7 @@ import CustomizePanel from "./components/CustomizePanel";
 import SalesNotificationPanel from "./components/SalesNotificationPanel/SalesNotificationPanel";
 import StockNotificationPanel from "./components/StockNotificationPanel/StockNotificationPanel";
 import ReviewNotificationPanel from "./components/ReviewNotificationPanel/ReviewNotificationPanel";
+import AnalyticsPanel from "./components/AnalyticsPanel";
 
 const App = () => {
   // --- STATE MANAGEMENT ---
@@ -123,6 +124,9 @@ const App = () => {
             updateSetting={updateSetting}
           />
         );
+      case "analytics":
+        return <AnalyticsPanel />;
+
       case "sales_notification":
       default:
         return (

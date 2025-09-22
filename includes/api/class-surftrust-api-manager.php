@@ -12,48 +12,57 @@ class Surftrust_Api_Manager
     /**
      * Register all REST API routes for the plugin.
      */
+    // In /surftrust/includes/api/class-surftrust-api-manager.php
+
     public function register_routes()
     {
-        // Debugging: Require the controller classes that contain the callback logic.
+        // --- 1. SETTINGS CONTROLLER (Admin) ---
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-settings-controller.php';
-
-
         $settings_controller = new Surftrust_Settings_Controller();
-        require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-public-controller.php';
-        $public_controller = new Surftrust_Public_Controller();
 
-        // Debugging: Register the route for getting and saving settings.
-        // The namespace 'surftrust/v1' keeps our routes organized.
         register_rest_route('surftrust/v1', '/settings', array(
-            // Route for GET requests
             array(
-                'methods'             => WP_REST_Server::READABLE, // This corresponds to a GET request
+                'methods'             => WP_REST_Server::READABLE,
                 'callback'            => array($settings_controller, 'get_settings'),
                 'permission_callback' => array($this, 'admin_permissions_check'),
             ),
-            // Route for POST requests
             array(
-                'methods'             => WP_REST_Server::CREATABLE, // This corresponds to a POST request
+                'methods'             => WP_REST_Server::CREATABLE,
                 'callback'            => array($settings_controller, 'save_settings'),
                 'permission_callback' => array($this, 'admin_permissions_check'),
             ),
         ));
-        // Endpoint to get all data needed for notifications
+
+        // --- 2. PUBLIC CONTROLLER (Public Data) ---
+        require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-public-controller.php';
+        $public_controller = new Surftrust_Public_Controller();
+
         register_rest_route('surftrust/v1', '/public/data', array(
-            'methods'  => WP_REST_Server::READABLE,
-            'callback' => array($public_controller, 'get_notification_data'),
-            'permission_callback' => '__return_true', // Publicly accessible
-        ));
-        // Endpoint to track a "view" event
-        register_rest_route('surftrust/v1', '/track/view', array(
-            'methods'  => WP_REST_Server::CREATABLE, // POST request
-            'callback' => array($public_controller, 'track_view'),
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => array($public_controller, 'get_notification_data'),
             'permission_callback' => '__return_true',
         ));
-        // Endpoint to track a "click" event
+
+        // --- 3. ANALYTICS CONTROLLER (Admin Dashboard & Public Tracking) ---
+        require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-analytics-controller.php';
+        $analytics_controller = new Surftrust_Analytics_Controller();
+
+        register_rest_route('surftrust/v1', '/analytics', array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => array($analytics_controller, 'get_analytics_data'),
+            'permission_callback' => array($this, 'admin_permissions_check'),
+        ));
+
+        // --- THIS IS THE CRITICAL FIX ---
+        // These routes must point to the $analytics_controller where the methods now live.
+        register_rest_route('surftrust/v1', '/track/view', array(
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => array($analytics_controller, 'track_view'),
+            'permission_callback' => '__return_true',
+        ));
         register_rest_route('surftrust/v1', '/track/click', array(
-            'methods'  => WP_REST_Server::CREATABLE, // POST request
-            'callback' => array($public_controller, 'track_click'),
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => array($analytics_controller, 'track_click'),
             'permission_callback' => '__return_true',
         ));
     }

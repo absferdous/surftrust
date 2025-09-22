@@ -1,6 +1,14 @@
 <?php
+
+/**
+ * The public-facing functionality of the plugin.
+ *
+ * @package    Surftrust
+ * @subpackage Surftrust/public
+ */
 class Surftrust_Public
 {
+
     private $plugin_name;
     private $version;
 
@@ -10,24 +18,27 @@ class Surftrust_Public
         $this->version = $version;
     }
 
+    /**
+     * Register the stylesheets and scripts for the public-facing side of the site.
+     */
     public function enqueue_scripts()
     {
-        // Register our main public script
-        wp_enqueue_script(
-            $this->plugin_name . '-public',
-            plugin_dir_url(__FILE__) . '../build/public.js',
-            array(), // No dependencies for now
-            $this->version,
-            true // Load in footer
-        );
         wp_enqueue_style(
-            $this->plugin_name . '-public',
+            $this->plugin_name,
             plugin_dir_url(__FILE__) . 'css/surftrust-public.css',
             array(),
-            $this->version
+            $this->version,
+            'all'
         );
 
-        // Fetch ALL our settings from the database
+        wp_enqueue_script(
+            $this->plugin_name,
+            plugin_dir_url(__FILE__) . '../build/public.js',
+            array(),
+            $this->version,
+            true
+        );
+
         global $wpdb;
         $table_name = $wpdb->prefix . 'surftrust_settings';
         $results = $wpdb->get_results("SELECT setting_name, setting_value FROM $table_name");
@@ -36,10 +47,9 @@ class Surftrust_Public
             $settings[$row->setting_name] = json_decode($row->setting_value, true);
         }
 
-        // Pass the settings and API info to our script
         wp_localize_script(
-            $this->plugin_name . '-public',
-            'surftrust_data', // This becomes a global JS object
+            $this->plugin_name,
+            'surftrust_data',
             array(
                 'settings' => $settings,
                 'api_url'  => untrailingslashit(rest_url('surftrust/v1')),

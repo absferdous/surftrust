@@ -18,6 +18,10 @@ const navItems = [{
   slug: "customize",
   title: "Customize",
   icon: "dashicons-admin-customizer"
+}, {
+  slug: "analytics",
+  title: "Analytics",
+  icon: "dashicons-chart-area"
 }];
 const SidebarNav = ({
   activeTab,

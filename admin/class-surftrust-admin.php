@@ -71,6 +71,7 @@ class Surftrust_Admin
         );
         // --- END ADDITION ---
 
+        $script_handle = 'surftrust-admin-app-script';
         // Add 'wp-components' to the dependency array for our script
         wp_enqueue_script(
             'surftrust-admin-app-script',
@@ -78,6 +79,14 @@ class Surftrust_Admin
             array('wp-element', 'wp-api-fetch', 'wp-components'),
             filemtime(plugin_dir_path(__FILE__) . '../build/index.js'),
             true
+        );
+        wp_localize_script(
+            $script_handle,
+            'surftrust_admin_data', // The name of our new JS object
+            array(
+                // Create a nonce with a specific name for our API
+                'nonce' => wp_create_nonce('wp_rest')
+            )
         );
     }
 }
