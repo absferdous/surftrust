@@ -15,6 +15,8 @@ class Surftrust_Loader
     protected $version;
     protected $plugin_name;
 
+    // In /surftrust/includes/class-surftrust-loader.php
+
     public function __construct()
     {
         if (defined('SURFTRUST_VERSION')) {
@@ -24,17 +26,35 @@ class Surftrust_Loader
         }
         $this->plugin_name = 'surftrust';
 
-        // Debugging: Load all necessary class files immediately.
+        // The constructor now ONLY loads files. It does not add any hooks.
         $this->load_dependencies();
-        // Debugging: Define all hooks that need to be registered.
+    }
+
+    /**
+     * Register all of the hooks related to the plugin.
+     * This method is called by the main plugin file.
+     */
+    public function run()
+    {
+        // This is now the safe place to add all our hooks.
+        $this->define_cpt_hooks();
         $this->define_admin_hooks();
         $this->define_api_hooks();
         $this->define_public_hooks();
     }
+    // In /surftrust/includes/class-surftrust-loader.php (add this new method)
 
+    private function define_cpt_hooks()
+    {
+        // This ensures the CPT is registered at the right time.
+        $plugin_cpt = new Surftrust_CPT();
+        // Note: The action is inside the Surftrust_CPT constructor, so we just need to instantiate it.
+    }
     private function load_dependencies()
     {
         // Admin-related files
+
+        require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/class-surftrust-cpt.php';
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'admin/class-surftrust-admin.php';
         // API-related files
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-api-manager.php';
@@ -68,10 +88,5 @@ class Surftrust_Loader
         $plugin_public = new Surftrust_Public($this->plugin_name, $this->version);
         // The 'wp_enqueue_scripts' hook is for the PUBLIC side of the site.
         add_action('wp_enqueue_scripts', array($plugin_public, 'enqueue_scripts'));
-    }
-    public function run()
-    {
-        // This class doesn't need a run method since hooks are registered directly
-        // in the constructor's helper methods. This demonstrates the completed wiring.
     }
 }

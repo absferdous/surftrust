@@ -113,3 +113,18 @@
   text-decoration: none;
   color: inherit;
 }
+
+/* --- Add these styles for the loading spinner --- */
+
+.surftrust-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px; /* Give it some height */
+}
+
+/* Target the spinner component's inner div */
+.surftrust-loading-container .components-spinner {
+  width: 100px; /* Increase width */
+  height: 100px; /* Increase height */
+}

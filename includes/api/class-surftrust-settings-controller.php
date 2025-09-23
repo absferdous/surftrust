@@ -19,7 +19,6 @@ class Surftrust_Settings_Controller
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'surftrust_settings';
-
         // Debugging: Query our custom table to get all settings.
         $results = $wpdb->get_results("SELECT setting_name, setting_value FROM $table_name");
 

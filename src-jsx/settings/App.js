@@ -6,7 +6,7 @@ import CustomizePanel from "./components/CustomizePanel";
 import SalesNotificationPanel from "./components/SalesNotificationPanel/SalesNotificationPanel";
 import StockNotificationPanel from "./components/StockNotificationPanel/StockNotificationPanel";
 import ReviewNotificationPanel from "./components/ReviewNotificationPanel/ReviewNotificationPanel";
-import AnalyticsPanel from "./components/AnalyticsPanel";
+import { Spinner } from "@wordpress/components";
 
 const App = () => {
   // --- STATE MANAGEMENT ---
@@ -124,8 +124,6 @@ const App = () => {
             updateSetting={updateSetting}
           />
         );
-      case "analytics":
-        return <AnalyticsPanel />;
 
       case "sales_notification":
       default:
@@ -138,7 +136,12 @@ const App = () => {
     }
   };
   if (isLoading) {
-    return <div>Loading...</div>; // We can replace this with a nice spinner later
+    // This will now display a centered spinner
+    return (
+      <div className="surftrust-loading-spinner">
+        <Spinner />
+      </div>
+    );
   }
 
   return (

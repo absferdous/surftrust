@@ -74,4 +74,4 @@ function run_surftrust()
     $plugin->run();
 }
 
-run_surftrust();
+add_action('plugins_loaded', 'run_surftrust');

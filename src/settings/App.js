@@ -6,7 +6,6 @@ import CustomizePanel from "./components/CustomizePanel";
 import SalesNotificationPanel from "./components/SalesNotificationPanel/SalesNotificationPanel";
 import StockNotificationPanel from "./components/StockNotificationPanel/StockNotificationPanel";
 import ReviewNotificationPanel from "./components/ReviewNotificationPanel/ReviewNotificationPanel";
-import AnalyticsPanel from "./components/AnalyticsPanel";
 import { Spinner } from "@wordpress/components";
 const App = () => {
   // --- STATE MANAGEMENT ---
@@ -119,8 +118,6 @@ const App = () => {
           settings: settings.customize,
           updateSetting: updateSetting
         });
-      case "analytics":
-        return /*#__PURE__*/React.createElement(AnalyticsPanel, null);
       case "sales_notification":
       default:
         return /*#__PURE__*/React.createElement(SalesNotificationPanel, {
