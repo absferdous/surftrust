@@ -59,11 +59,13 @@ class Surftrust_Loader
         // API-related files
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-api-manager.php';
         require_once SURFTRUST_PLUGIN_DIR_PATH . 'public/class-surftrust-public.php';
+        require_once SURFTRUST_PLUGIN_DIR_PATH . 'admin/class-surftrust-metabox.php';
     }
 
     private function define_admin_hooks()
     {
         $plugin_admin = new Surftrust_Admin($this->plugin_name, $this->version);
+        new Surftrust_Metabox();
 
         // Debugging: Add an action to create the admin menu page.
         add_action('admin_menu', array($plugin_admin, 'add_admin_menu'));

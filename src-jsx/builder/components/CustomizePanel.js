@@ -1,8 +1,8 @@
 import React from "react";
-import TimingSettings from "./customize/TimingSettings";
-import BrandingSettings from "./customize/BrandingSettings";
-import FontAnimationSettings from "./customize/FontAnimationSettings";
-import AdvancedDisplayRules from "./customize/AdvancedDisplayRules";
+import TimingSettings from "../../settings/components/customize/TimingSettings";
+import BrandingSettings from "../../settings/components/customize/BrandingSettings";
+import FontAnimationSettings from "../../settings/components/customize/FontAnimationSettings";
+import AdvancedDisplayRules from "../../settings/components/customize/AdvancedDisplayRules";
 const CustomizePanel = ({ settings, updateSetting }) => {
   if (!settings) {
     return <div className="surftrust-panel">Loading...</div>;

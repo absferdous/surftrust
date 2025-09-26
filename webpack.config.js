@@ -11,5 +11,7 @@ module.exports = {
     // The key 'analytics' will create a 'build/analytics.js' file
     analytics: "./src-jsx/analytics/analytics.js",
     dashboard: "./src-jsx/dashboard/dashboard.js",
+    builder: "./src-jsx/builder/builder.js",
+    public: "./src-jsx/public.js",
   },
 };

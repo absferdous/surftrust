@@ -41,17 +41,14 @@ class Surftrust_Public
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'surftrust_settings';
-        $results = $wpdb->get_results("SELECT setting_name, setting_value FROM $table_name");
-        $settings = array();
-        foreach ($results as $row) {
-            $settings[$row->setting_name] = json_decode($row->setting_value, true);
-        }
+        $customize_json = $wpdb->get_var("SELECT setting_value FROM $table_name WHERE setting_name = 'customize'");
+        $customize_settings = json_decode($customize_json, true);
 
         wp_localize_script(
             $this->plugin_name,
-            'surftrust_data',
+            'surftrust_globals',
             array(
-                'settings' => $settings,
+                'customize' => $customize_settings ?: [],
                 'api_url'  => untrailingslashit(rest_url('surftrust/v1')),
             )
         );

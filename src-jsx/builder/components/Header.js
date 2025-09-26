@@ -1,9 +1,9 @@
-// /src-jsx/components/Header.js
+// /src-jsx/settings/components/Header.js
 
 import React from "react";
 
-// We now receive props: onSave function and isSaving state.
-const Header = ({ onSave, isSaving }) => {
+// 1. Add 'title' to the destructured props
+const Header = ({ onSave, isSaving, title }) => {
   return (
     <header
       style={{
@@ -13,11 +13,12 @@ const Header = ({ onSave, isSaving }) => {
         marginBottom: "20px",
       }}
     >
-      <h1>Surftrust Settings</h1>
+      {/* 2. Use the title prop, or fallback to a default */}
+      <h1>{title || "Surftrust Settings"}</h1>
       <button
         className="button button-primary"
-        onClick={onSave} // Call the passed-in onSave function when clicked
-        disabled={isSaving} // Disable the button while saving
+        onClick={onSave}
+        disabled={isSaving}
       >
         {isSaving ? "Saving..." : "Save Changes"}
       </button>

@@ -12,7 +12,7 @@ class Surftrust_CPT
     /**
      * The unique identifier for this post type.
      */
-    const POST_TYPE = 'surftrust_notification';
+    const POST_TYPE = 'st_notification';
 
     /**
      * Initialize the class and register the post type.
@@ -54,7 +54,7 @@ class Surftrust_CPT
             'hierarchical'          => false,
             'public'                => false, // Not visible on the public site
             'show_ui'               => true,  // Show in the admin dashboard
-            'show_in_menu'          => 'surftrust',  // Show as a top-level menu item
+            'show_in_menu'          => 'surftrust-dashboard',  // Show as a top-level menu item
             'menu_position'         => 30,
             'menu_icon'             => 'dashicons-bell',
             'show_in_admin_bar'     => true,

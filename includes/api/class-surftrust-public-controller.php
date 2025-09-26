@@ -10,120 +10,152 @@ class Surftrust_Public_Controller
 {
 
     /**
-     * Retrieves all data needed for displaying notifications.
-     * This includes sales, reviews, and low stock alerts.
+     * Retrieves all active, published notifications and their corresponding live data.
      *
      * @param WP_REST_Request $request The request object.
      * @return WP_REST_Response The response object with notification data.
      */
     public function get_notification_data(WP_REST_Request $request)
     {
-        $data = [
-            'sales'   => $this->get_recent_sales(),
-            'reviews' => $this->get_recent_reviews(),
-            'stock'   => $this->get_low_stock_products()
-        ];
+        $notification_data = [];
 
-        return new WP_REST_Response($data, 200);
+        // 1. Get all PUBLISHED notification posts
+        $args = array(
+            'post_type'      => 'st_notification', // Use the correct, shorter CPT name
+            'post_status'    => 'publish',
+            'posts_per_page' => -1, // Get all of them
+        );
+        $query = new WP_Query($args);
+
+        if (!$query->have_posts()) {
+            return new WP_REST_Response([], 200); // Return empty if no campaigns are published
+        }
+
+        // 2. Loop through each published campaign and get its data
+        while ($query->have_posts()) {
+            $query->the_post();
+            $post_id = get_the_ID();
+
+            // Get all the saved settings for this specific notification
+            $settings = get_post_meta($post_id, '_surftrust_settings', true);
+            if (empty($settings)) continue;
+
+            // Get the type of notification from its settings
+            $type = isset($settings['type']) ? $settings['type'] : '';
+            $data_to_add = null;
+
+            // Depending on the type, fetch the relevant dynamic data
+            switch ($type) {
+                case 'sale':
+                    $data_to_add = $this->get_single_recent_sale();
+                    break;
+                case 'review':
+                    $data_to_add = $this->get_single_recent_review();
+                    break;
+                case 'stock':
+                    $data_to_add = $this->get_single_low_stock_product();
+                    break;
+            }
+
+            // If we found live data, combine it with the campaign's settings
+            if ($data_to_add) {
+                $notification_data[] = [
+                    'type'     => $type,
+                    'settings' => $settings, // The settings saved in the campaign post meta
+                    'data'     => $data_to_add,  // The live data from WooCommerce
+                ];
+            }
+        }
+        wp_reset_postdata();
+
+        return new WP_REST_Response($notification_data, 200);
     }
 
-
-
     /**
-     * Fetches the 10 most recent completed WooCommerce orders.
-     *
-     * @return array An array of recent sales data.
+     * Fetches the data for the single most recent completed sale.
+     * @return array|false Sale data or false if none found.
      */
-    private function get_recent_sales()
+    private function get_single_recent_sale()
     {
-        $sales = [];
-        $args = array(
-            'limit'  => 10,
-            'status' => 'completed',
-            'orderby' => 'date_created',
-            'order' => 'DESC',
-        );
+        $args = array('limit' => 1, 'status' => 'completed', 'orderby' => 'date_created', 'order' => 'DESC');
         $orders = wc_get_orders($args);
+        if (empty($orders)) return false;
 
-        foreach ($orders as $order) {
-            $items = $order->get_items();
-            if (empty($items)) {
-                continue; // Skip if order has no items
-            }
-            $first_item = reset($items);
+        $order = reset($orders);
+        $items = $order->get_items();
+        if (empty($items)) return false;
 
-            $product_id = $first_item->get_product_id();
-            $product = wc_get_product($product_id);
+        $first_item = reset($items);
+        $product = $first_item->get_product();
+        if (!$product) return false;
 
-            // --- ROBUSTNESS CHECK ---
-            // Skip this item if the product doesn't exist anymore
-            if (! $product) {
-                continue;
-            }
-
-            $sales[] = [
-                'customer_name' => $order->get_billing_first_name(),
-                'product_name'      => $first_item->get_name(),
-                'product_id'        => $product_id,
-                'city'              => $order->get_billing_city(),
-                'country'           => $order->get_billing_country(),
-                'time_ago'          => human_time_diff($order->get_date_created()->getTimestamp(), current_time('timestamp')) . ' ago',
-                'product_image_url' => wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
-                'product_url'       => $product->get_permalink(),
-            ];
-        }
-        return $sales;
+        return [
+            'product_name'      => $product->get_name(),
+            'product_id'        => $product->get_id(),
+            'customer_name'     => $order->get_billing_first_name(),
+            'city'              => $order->get_billing_city(),
+            'product_image_url' => wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
+            'product_url'       => $product->get_permalink(),
+        ];
     }
 
     /**
-     * Fetches the 10 most recent approved WooCommerce reviews.
-     *
-     * @return array An array of recent review data.
+     * Fetches the data for the single most recent approved review.
+     * @return array|false Review data or false if none found.
      */
-    private function get_recent_reviews()
+    private function get_single_recent_review()
     {
-        $reviews = [];
-        $args = array(
-            'number' => 10,
-            'status' => 'approve',
-            'post_type' => 'product',
-        );
+        $args = array('number' => 1, 'status' => 'approve', 'post_type' => 'product');
         $comments = get_comments($args);
+        if (empty($comments)) return false;
 
-        foreach ($comments as $comment) {
-            $product = wc_get_product($comment->comment_post_ID);
-            if (!$product) continue;
+        $comment = reset($comments);
+        $product = wc_get_product($comment->comment_post_ID);
+        if (!$product) return false;
 
-            $reviews[] = [
-                'product_name'  => $product->get_name(),
-                'product_id'    => $product->get_id(),
-                'reviewer_name' => $comment->comment_author,
-                'rating'        => intval(get_comment_meta($comment->comment_ID, 'rating', true)),
-                'content'       => $comment->comment_content,
-                'product_url'   => $product->get_permalink(),
-            ];
-        }
-        return $reviews;
+        return [
+            'product_name'  => $product->get_name(),
+            'product_id'    => $product->get_id(),
+            'reviewer_name' => $comment->comment_author,
+            'rating'        => intval(get_comment_meta($comment->comment_ID, 'rating', true)),
+            'product_url'   => $product->get_permalink(),
+        ];
     }
+
+    /**
+     * Fetches the data for one random low stock product.
+     * @return array|false Product data or false if none found.
+     */
+    private function get_single_low_stock_product()
+    {
+        $low_stock_products = $this->get_low_stock_products(); // Reuses our more complex query
+        if (empty($low_stock_products)) return false;
+
+        // Return a random one from the list of all low stock products
+        return $low_stock_products[array_rand($low_stock_products)];
+    }
+
+    /**
+     * Helper function to get all low stock products.
+     * @return array A list of low stock products.
+     */
     private function get_low_stock_products()
     {
         global $wpdb;
 
-        // Fetch the threshold from our saved settings.
-        // This is a direct, efficient way to get a single setting value.
         $option_value = $wpdb->get_var("SELECT setting_value FROM {$wpdb->prefix}surftrust_settings WHERE setting_name = 'low_stock_alert'");
         $settings = json_decode($option_value, true);
-        $threshold = isset($settings['threshold']) ? absint($settings['threshold']) : 5; // Default to 5 if not set
+        $threshold = isset($settings['threshold']) ? absint($settings['threshold']) : 5;
 
-        $products = [];
         $args = array(
-            'post_type'      => 'product',
-            'posts_per_page' => 10,
-            'meta_query'     => array(
+            'limit'        => 10,
+            'status'       => 'publish',
+            'stock_status' => 'instock',
+            'meta_query'   => array(
                 'relation' => 'AND',
                 array(
-                    'key'     => '_manage_stock',
-                    'value'   => 'yes',
+                    'key'   => '_manage_stock',
+                    'value' => 'yes',
                 ),
                 array(
                     'key'     => '_stock',
@@ -131,28 +163,22 @@ class Surftrust_Public_Controller
                     'compare' => '<=',
                     'type'    => 'NUMERIC',
                 ),
-                array(
-                    'key'     => '_stock_status',
-                    'value'   => 'instock',
-                ),
             ),
         );
-        $query = new WP_Query($args);
 
-        if ($query->have_posts()) {
-            while ($query->have_posts()) {
-                $query->the_post();
-                $product = wc_get_product(get_the_ID());
-                $products[] = [
-                    'product_name'      => $product->get_name(),
-                    'product_id'        => $product->get_id(),
-                    'stock_count'       => $product->get_stock_quantity(),
-                    'product_image_url' => wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
-                    'product_url'       => $product->get_permalink(),
-                ];
-            }
+        $wc_products = wc_get_products($args);
+        $products = [];
+
+        foreach ($wc_products as $product) {
+            $products[] = [
+                'product_name'      => $product->get_name(),
+                'product_id'        => $product->get_id(),
+                'stock_count'       => $product->get_stock_quantity(),
+                'product_image_url' => wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
+                'product_url'       => $product->get_permalink(),
+            ];
         }
-        wp_reset_postdata();
+
         return $products;
     }
 }
