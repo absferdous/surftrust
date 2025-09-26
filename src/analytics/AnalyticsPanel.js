@@ -4,41 +4,11 @@ import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
+import StatCard from "../shared/components/StatCard";
 Chart.register(...registerables); // Required for Chart.js v3+
 
 // A reusable component for the stat cards
-const StatCard = ({
-  icon,
-  value,
-  label
-}) => {
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: "#fff",
-      padding: "25px",
-      borderRadius: "8px",
-      boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
-      display: "flex",
-      alignItems: "center",
-      gap: "20px"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: `dashicons ${icon}`,
-    style: {
-      fontSize: "36px",
-      color: "#6c5ce7"
-    }
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: "2.2em",
-      fontWeight: "bold"
-    }
-  }, value), /*#__PURE__*/React.createElement("div", {
-    style: {
-      color: "#666"
-    }
-  }, label)));
-};
+
 const AnalyticsPanel = () => {
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);

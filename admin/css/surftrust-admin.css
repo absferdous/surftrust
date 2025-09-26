@@ -58,3 +58,63 @@
 .surftrust-notice {
   margin-bottom: 20px;
 }
+/* /surftrust/admin/css/surftrust-admin.css */
+
+/* --- Dashboard Styles --- */
+
+/* Main Header Welcome Box */
+.surftrust-dashboard-header {
+  background: #fff;
+  padding: 25px 30px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.surftrust-dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.surftrust-dashboard-header p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Stat Grid Layout */
+.surftrust-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Individual Stat Card */
+.surftrust-stat-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.surftrust-stat-card .dashicons {
+  font-size: 36px;
+  color: #6c5ce7; /* A modern purple */
+}
+
+.surftrust-stat-card-value {
+  font-size: 2.2em;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.surftrust-stat-card-label {
+  color: #666;
+  margin-top: 3px;
+}

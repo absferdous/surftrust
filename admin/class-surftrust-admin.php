@@ -29,26 +29,39 @@ class Surftrust_Admin
 
     // In /surftrust/admin/class-surftrust-admin.php
 
+    // In /surftrust/admin/class-surftrust-admin.php
+
     public function add_admin_menu()
     {
-        // 1. Create the Top-Level Menu, which IS the Dashboard page.
+        // 1. Create the Top-Level Menu.
+        // We give it a unique slug and make its default page the "All Notifications" list.
         add_menu_page(
-            'Surftrust Dashboard',
+            'Surftrust',
             'Surftrust',
             'manage_options',
-            'surftrust-dashboard', // Use the dashboard slug as the main slug
+            'surftrust', // The main parent slug
+            // The callback for the top-level item will be the "All Notifications" CPT list.
+            // We achieve this by redirecting in a cleaner way. Let's make it the dashboard.
             array($this, 'display_dashboard_page'),
             'dashicons-bell',
             30
         );
 
-        // 2. Add "All Notifications" and "Add New" under the CPT's menu parent.
-        // This links them to the CPT, but they will appear under our main menu.
-        // We do this by setting 'show_in_menu' in the CPT file.
-
-        // 3. Add our other pages as sub-menus to the Dashboard.
+        // 2. Add the Dashboard as the FIRST sub-menu item.
+        // By giving it the SAME slug as the parent, it becomes the default page
+        // when a user clicks the top-level "Surftrust" link.
         add_submenu_page(
-            'surftrust-dashboard', // Parent is now the dashboard
+            'surftrust',           // Parent slug
+            'Dashboard',           // Page title
+            'Dashboard',           // Menu title
+            'manage_options',
+            'surftrust',           // Use parent slug to make it the default
+            array($this, 'display_dashboard_page')
+        );
+
+        // 3. Add Settings and Analytics as additional sub-menus.
+        add_submenu_page(
+            'surftrust',
             'Settings',
             'Settings',
             'manage_options',
@@ -57,7 +70,7 @@ class Surftrust_Admin
         );
 
         add_submenu_page(
-            'surftrust-dashboard', // Parent is now the dashboard
+            'surftrust',
             'Analytics',
             'Analytics',
             'manage_options',
