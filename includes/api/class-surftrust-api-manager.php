@@ -65,6 +65,26 @@ class Surftrust_Api_Manager
             'callback'            => array($analytics_controller, 'track_click'),
             'permission_callback' => '__return_true',
         ));
+        // notifucations controller
+        require_once SURFTRUST_PLUGIN_DIR_PATH . 'includes/api/class-surftrust-notifications-controller.php';
+        $notifications_controller = new Surftrust_Notifications_Controller();
+        // Register the main "Get Notifications" endpoint
+        register_rest_route('surftrust/v1', '/notifications', array(
+            'methods'  => WP_REST_Server::READABLE, // This is a GET request
+            'callback' => array($notifications_controller, 'get_notifications'),
+            'permission_callback' => array($this, 'admin_permissions_check'), // Secure: admin only
+        ));
+        register_rest_route('surftrust/v1', '/notifications/(?P<id>\\d+)/toggle', array(
+            'methods'  => WP_REST_Server::CREATABLE, // This is a POST request
+            'callback' => array($notifications_controller, 'toggle_notification_status'),
+            'permission_callback' => array($this, 'admin_permissions_check'),
+        ));
+        // Register the "Duplicate" endpoint
+        register_rest_route('surftrust/v1', '/notifications/(?P<id>\\d+)/duplicate', array(
+            'methods'  => WP_REST_Server::CREATABLE, // This is a POST request
+            'callback' => array($notifications_controller, 'duplicate_notification'),
+            'permission_callback' => array($this, 'admin_permissions_check'),
+        ));
     }
 
     /**

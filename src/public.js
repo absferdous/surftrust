@@ -187,6 +187,7 @@
   function trackEvent(eventType, campaign) {
     const payload = {
       notification_type: campaign.type,
+      notification_id: campaign.settings.id,
       product_id: campaign.data.product_id || 0
     };
     return fetch(`${apiUrl}/track/${eventType}`, {

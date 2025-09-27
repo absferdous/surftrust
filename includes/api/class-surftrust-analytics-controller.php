@@ -106,6 +106,7 @@ class Surftrust_Analytics_Controller
 
         // Basic validation
         $notification_type = isset($params['notification_type']) ? sanitize_text_field($params['notification_type']) : '';
+        $notification_id   = isset($params['notification_id']) ? absint($params['notification_id']) : 0;
         $product_id        = isset($params['product_id']) ? absint($params['product_id']) : 0;
 
         if (empty($notification_type)) {
@@ -117,6 +118,7 @@ class Surftrust_Analytics_Controller
             [
                 'event_type'        => $event_type,
                 'notification_type' => $notification_type,
+                'notification_id'   => $notification_id,
                 'product_id'        => $product_id,
                 'timestamp'         => current_time('mysql'),
             ]

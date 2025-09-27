@@ -13,5 +13,6 @@ module.exports = {
     dashboard: "./src-jsx/dashboard/dashboard.js",
     builder: "./src-jsx/builder/builder.js",
     public: "./src-jsx/public.js",
+    all_notifications: "./src-jsx/all-notifications/all-notifications.js",
   },
 };

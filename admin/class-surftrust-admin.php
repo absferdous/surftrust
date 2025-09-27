@@ -77,6 +77,14 @@ class Surftrust_Admin
             'surftrust-analytics',
             array($this, 'display_analytics_page')
         );
+        add_submenu_page(
+            'surftrust',                       // <-- The key change is here
+            'All Notifications',        // Page title
+            'All Notifications',        // Menu title (doesn't matter as it's hidden)
+            'manage_options',
+            'surftrust-all-notifications', // The slug our filter redirects to
+            array($this, 'display_all_notifications_page')
+        );
     }
     /**
      * Render the basic HTML structure for the admin page.
@@ -102,6 +110,10 @@ class Surftrust_Admin
     {
         echo '<div class="wrap"><div id="surftrust-dashboard-app"></div></div>';
     }
+    public function display_all_notifications_page()
+    {
+        echo '<div class="wrap"><div id="surftrust-all-notifications-app"></div></div>';
+    }
     /**
      * Enqueue scripts and styles for the admin area.
      */
@@ -114,6 +126,22 @@ class Surftrust_Admin
 
     // In /surftrust/admin/class-surftrust-admin.php
 
+    public function redirect_all_notifications_link($submenu_file)
+    {
+        global $submenu;
+
+        // The parent slug is 'surftrust'
+        // The original CPT link is 'edit.php?post_type=st_notification'
+        if (isset($submenu['surftrust'])) {
+            foreach ($submenu['surftrust'] as $key => $item) {
+                if ($item[2] === 'edit.php?post_type=st_notification') {
+                    // We found the original link, now change its destination slug
+                    $submenu['surftrust'][$key][2] = 'surftrust-all-notifications';
+                }
+            }
+        }
+        return $submenu_file;
+    }
     public function enqueue_scripts($hook_suffix)
     {
         // Get the current screen information at the top
@@ -121,11 +149,12 @@ class Surftrust_Admin
 
         // Define all of our unique page hooks
         $dashboard_page_hook = 'toplevel_page_surftrust';
+        $all_notifs_page_hook  = 'surftrust_page_surftrust-all-notifications';
         $settings_page_hook  = 'surftrust_page_surftrust-settings';
         $analytics_page_hook = 'surftrust_page_surftrust-analytics';
 
         // An array of our sub-menu page hooks for easy checking
-        $surftrust_pages = [$dashboard_page_hook, $settings_page_hook, $analytics_page_hook];
+        $surftrust_pages = [$dashboard_page_hook, $all_notifs_page_hook, $settings_page_hook, $analytics_page_hook];
 
         // First, check if we are on any of our pages OR the CPT edit screen.
         // If we are, we know we need to load our common stylesheets.
@@ -187,6 +216,18 @@ class Surftrust_Admin
                 plugin_dir_url(__FILE__) . '../build/builder.js',
                 array('wp-element', 'wp-api-fetch', 'wp-components'),
                 filemtime(plugin_dir_path(__FILE__) . '../build/builder.js'),
+                true
+            );
+            wp_localize_script($script_handle, 'surftrust_admin_data', array('nonce' => wp_create_nonce('wp_rest')));
+        }
+        // Logic for the "All Notifications" Page
+        if ($hook_suffix === $all_notifs_page_hook) {
+            $script_handle = 'surftrust-all-notifications-app';
+            wp_enqueue_script(
+                $script_handle,
+                plugin_dir_url(__FILE__) . '../build/all_notifications.js',
+                array('wp-element', 'wp-api-fetch', 'wp-components'),
+                filemtime(plugin_dir_path(__FILE__) . '../build/all_notifications.js'),
                 true
             );
             wp_localize_script($script_handle, 'surftrust_admin_data', array('nonce' => wp_create_nonce('wp_rest')));

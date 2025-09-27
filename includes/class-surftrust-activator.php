@@ -52,7 +52,9 @@ class Surftrust_Activator
             id BIGINT(20) NOT NULL AUTO_INCREMENT,
             event_type VARCHAR(10) NOT NULL,
             notification_type VARCHAR(20) NOT NULL,
-            product_id BIGINT(20) UNSIGNED DEFAULT 0,
+            notification_id BIGINT(20) UNSIGNED DEFAULT 0,
+                        product_id BIGINT(20) UNSIGNED DEFAULT 0,
+
             timestamp DATETIME NOT NULL,
             PRIMARY KEY  (id)
         ) $charset_collate;";
