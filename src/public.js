@@ -187,7 +187,9 @@
   function trackEvent(eventType, campaign) {
     const payload = {
       notification_type: campaign.type,
-      notification_id: campaign.settings.id,
+      // --- THIS IS THE FINAL FIX ---
+      // Use the top-level 'id' from the campaign object, which is the Post ID
+      notification_id: campaign.id,
       product_id: campaign.data.product_id || 0
     };
     return fetch(`${apiUrl}/track/${eventType}`, {

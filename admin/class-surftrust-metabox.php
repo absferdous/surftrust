@@ -42,6 +42,7 @@ class Surftrust_Metabox
     {
         // We add a nonce field for security
         wp_nonce_field('surftrust_save_meta_box_data', 'surftrust_meta_box_nonce');
+        $saved_settings = get_post_meta($post->ID, '_surftrust_settings', true);
         echo '<div id="surftrust-builder-app"></div>';
     }
 

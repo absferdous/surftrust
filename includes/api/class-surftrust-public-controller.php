@@ -60,6 +60,7 @@ class Surftrust_Public_Controller
             // If we found live data, combine it with the campaign's settings
             if ($data_to_add) {
                 $notification_data[] = [
+                    'id'       => $post_id,
                     'type'     => $type,
                     'settings' => $settings, // The settings saved in the campaign post meta
                     'data'     => $data_to_add,  // The live data from WooCommerce

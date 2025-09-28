@@ -218,7 +218,9 @@ class Surftrust_Admin
                 filemtime(plugin_dir_path(__FILE__) . '../build/builder.js'),
                 true
             );
-            wp_localize_script($script_handle, 'surftrust_admin_data', array('nonce' => wp_create_nonce('wp_rest')));
+            global $post;
+            $saved_settings = get_post_meta($post->ID, '_surftrust_settings', true);
+            wp_localize_script($script_handle, 'surftrust_admin_data', array('nonce' => wp_create_nonce('wp_rest'),      'settings' => is_array($saved_settings) ? $saved_settings : new stdClass(),));
         }
         // Logic for the "All Notifications" Page
         if ($hook_suffix === $all_notifs_page_hook) {

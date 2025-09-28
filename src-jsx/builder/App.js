@@ -1,24 +1,30 @@
 // /src-jsx/builder/App.js
 
-import React, { useState, useEffect } from "react"; // Import useEffect
+import React, { useState, useEffect } from "react";
 import ChooseType from "./components/ChooseType";
 import ChooseTemplate from "./components/ChooseTemplate";
 import MainEditor from "./components/MainEditor";
 
 const App = () => {
-  const [settings, setSettings] = useState({ type: null });
-  const [wizardStep, setWizardStep] = useState("choose_type");
+  // --- START CHANGE: Initialize state from the global object ---
+  // Read the settings passed from our PHP localize script.
+  // We use || {} to provide a safe fallback.
+  const initialSettings = window.surftrust_admin_data.settings || {};
+  const [settings, setSettings] = useState(initialSettings);
+  // --- END CHANGE ---
 
-  // --- NEW: useEffect to sync state with hidden input ---
-  // This effect runs every time the 'settings' object changes.
+  // Determine the initial wizard step based on whether a 'type' is already set.
+  const [wizardStep, setWizardStep] = useState(
+    initialSettings.type ? "main_editor" : "choose_type"
+  );
+
+  // This effect syncs the React state back to the hidden input for saving.
   useEffect(() => {
-    // Find our hidden textarea in the DOM.
     const settingsInput = document.getElementById("surftrust_settings_field");
     if (settingsInput) {
-      // Convert the settings object to a JSON string and update the textarea's value.
       settingsInput.value = JSON.stringify(settings);
     }
-  }, [settings]); // The dependency array ensures this only runs when 'settings' changes.
+  }, [settings]);
 
   const handleSelectType = (typeSlug) => {
     setSettings({ type: typeSlug });
@@ -50,14 +56,12 @@ const App = () => {
   return (
     <div>
       {renderWizardStep()}
-
-      {/* --- NEW: The hidden textarea for saving data --- */}
-      {/* The name '_surftrust_settings' is what we will look for in our PHP save function. */}
       <textarea
         id="surftrust_settings_field"
         name="_surftrust_settings"
         style={{ display: "none" }}
-        readOnly // We only control its value from React
+        // We use defaultValue to handle the initial load, then the useEffect handles updates.
+        defaultValue={JSON.stringify(initialSettings)}
       />
     </div>
   );

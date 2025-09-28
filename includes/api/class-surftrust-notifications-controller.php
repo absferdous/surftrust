@@ -10,13 +10,11 @@ class Surftrust_Notifications_Controller
 {
 
     /**
-     * Placeholder for the main function to retrieve all notifications.
+     * Retrieves all notifications with their associated data and stats.
      *
      * @param WP_REST_Request $request The request object.
      * @return WP_REST_Response The response object with an array of notifications.
      */
-    // In /surftrust/includes/api/class-surftrust-notifications-controller.php
-
     public function get_notifications(WP_REST_Request $request)
     {
         $notifications = [];
@@ -25,28 +23,26 @@ class Surftrust_Notifications_Controller
         // 1. Prepare query arguments based on request parameters
         $args = array(
             'post_type'      => 'st_notification',
-            'posts_per_page' => -1, // Get all of them
+            'posts_per_page' => -1,
             'orderby'        => 'date',
             'order'          => 'DESC',
         );
 
-        // Handle status filtering (for our "Enabled" / "Disabled" tabs)
         $status_filter = $request->get_param('status');
         if (in_array($status_filter, array('publish', 'draft'))) {
             $args['post_status'] = $status_filter;
         }
 
-        // Handle search query
         $search_query = $request->get_param('search');
         if (! empty($search_query)) {
             $args['s'] = sanitize_text_field($search_query);
         }
 
-        // 2. Execute the main query
+        // 2. Execute the main query for notification posts
         $query = new WP_Query($args);
 
         if (! $query->have_posts()) {
-            return new WP_REST_Response([], 200); // Return empty array if no posts found
+            return new WP_REST_Response([], 200);
         }
 
         // 3. Loop through each post and build the data object
@@ -56,16 +52,17 @@ class Surftrust_Notifications_Controller
 
             $settings = get_post_meta($post_id, '_surftrust_settings', true);
 
-            // Fetch stats for this specific post ID
+            // --- THIS IS THE CRITICAL FIX ---
+            // Fetch stats for this specific notification campaign ID
             $views = (int) $GLOBALS['wpdb']->get_var($GLOBALS['wpdb']->prepare(
-                "SELECT COUNT(id) FROM $analytics_table WHERE event_type = 'view' AND product_id = %d",
-                $post_id // This should be notification_id, we will fix this in analytics controller
+                "SELECT COUNT(id) FROM $analytics_table WHERE event_type = 'view' AND notification_id = %d",
+                $post_id
             ));
             $clicks = (int) $GLOBALS['wpdb']->get_var($GLOBALS['wpdb']->prepare(
-                "SELECT COUNT(id) FROM $analytics_table WHERE event_type = 'click' AND product_id = %d",
-                $post_id // This should be notification_id, we will fix this in analytics controller
+                "SELECT COUNT(id) FROM $analytics_table WHERE event_type = 'click' AND notification_id = %d",
+                $post_id
             ));
-
+            // --- END FIX ---
 
             $notifications[] = [
                 'id'     => $post_id,
@@ -82,29 +79,22 @@ class Surftrust_Notifications_Controller
 
         return new WP_REST_Response($notifications, 200);
     }
+
     /**
      * Toggles a notification's post status between 'publish' and 'draft'.
-     *
-     * @param WP_REST_Request $request The request object, containing the post ID.
-     * @return WP_REST_Response The new post status or an error.
      */
     public function toggle_notification_status(WP_REST_Request $request)
     {
         $post_id = $request->get_param('id');
         $post = get_post($post_id);
 
-        // Security check: ensure post exists and is our CPT
         if (! $post || $post->post_type !== 'st_notification') {
             return new WP_REST_Response(['error' => 'Invalid notification ID.'], 404);
         }
 
-        // Get the current status
         $current_status = $post->post_status;
-
-        // Determine the new status
         $new_status = ($current_status === 'publish') ? 'draft' : 'publish';
 
-        // Update the post
         $result = wp_update_post([
             'ID'          => $post_id,
             'post_status' => $new_status,
@@ -114,36 +104,35 @@ class Surftrust_Notifications_Controller
             return new WP_REST_Response(['error' => 'Failed to update status.'], 500);
         }
 
-        // Return the new status on success
         return new WP_REST_Response(['new_status' => $new_status], 200);
     }
+
+    /**
+     * Duplicates a notification post and its meta data.
+     */
     public function duplicate_notification(WP_REST_Request $request)
     {
         $post_id_to_duplicate = $request->get_param('id');
         $post = get_post($post_id_to_duplicate);
 
-        // Security check: ensure post exists and is our CPT
         if (! $post || $post->post_type !== 'st_notification') {
             return new WP_REST_Response(['error' => 'Invalid notification ID.'], 404);
         }
 
-        // 1. Prepare the new post data
         $new_post_args = array(
             'post_title'   => $post->post_title . ' (Copy)',
             'post_content' => $post->post_content,
-            'post_status'  => 'draft', // Always create duplicates as drafts
+            'post_status'  => 'draft',
             'post_type'    => $post->post_type,
             'post_author'  => get_current_user_id(),
         );
 
-        // 2. Insert the new post into the database
         $new_post_id = wp_insert_post($new_post_args);
 
         if (is_wp_error($new_post_id)) {
             return new WP_REST_Response(['error' => 'Failed to create new post.'], 500);
         }
 
-        // 3. Copy the post meta (our settings) from the old post to the new one
         $post_meta = get_post_meta($post_id_to_duplicate, '_surftrust_settings', true);
         if (! empty($post_meta)) {
             update_post_meta($new_post_id, '_surftrust_settings', $post_meta);

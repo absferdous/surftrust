@@ -118,3 +118,75 @@
   color: #666;
   margin-top: 3px;
 }
+/* /surftrust/admin/css/surftrust-admin.css */
+
+/* --- All Notifications Dashboard Styles --- */
+
+.surftrust-all-notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.surftrust-all-notifications-header h1 {
+  margin: 0;
+}
+
+.surftrust-filters {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Styles for the filter tabs */
+.surftrust-filter-tabs {
+  display: inline-flex;
+  background: #e0e0e1;
+  border-radius: 6px;
+  padding: 5px;
+}
+
+.surftrust-filter-tabs button {
+  background: transparent;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  border-radius: 4px;
+}
+
+.surftrust-filter-tabs button.is-active {
+  background: #fff;
+  color: #2271b1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the main table */
+.wp-list-table.surftrust-notifications-table {
+  margin-top: 20px;
+}
+
+.wp-list-table.surftrust-notifications-table .column-status .dashicons {
+  font-size: 30px;
+  cursor: pointer;
+  color: #ccd0d4; /* Gray for 'off' */
+  transition: color 0.2s ease-in-out;
+}
+
+.wp-list-table.surftrust-notifications-table
+  .column-status
+  .dashicons.is-enabled {
+  color: #2271b1; /* Blue for on */
+}
+.wp-list-table.surftrust-notifications-table
+  .column-status
+  .dashicons.is-enabled {
+  color: #2271b1; /* Blue for 'on' */
+}
+
+.wp-list-table.surftrust-notifications-table .column-status .dashicons:hover {
+  color: #135e96; /* Darker blue on hover */
+}
