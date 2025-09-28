@@ -1,33 +1,53 @@
-// /src-jsx/all-notifications/App.js
 import React, { useState, useEffect, useCallback } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { Spinner } from "@wordpress/components";
 import FilterTabs from "./components/FilterTabs";
-import NotificationRow from "./components/NotificationRow"; // <-- IMPORT THE NEW COMPONENT
+import SearchBar from "./components/SearchBar";
+import NotificationRow from "./components/NotificationRow";
 
 const App = () => {
+  // --- STATE MANAGEMENT ---
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [statusFilter, setStatusFilter] = useState("all");
 
-  // This useEffect hook is now correct and will not cause an infinite loop.
+  // State for our filters
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // A simple state variable to trigger a re-fetch when an action (like duplicate) is performed
+  const [dataVersion, setDataVersion] = useState(0);
+
+  // --- DATA FETCHING ---
+  // This effect re-fetches data whenever a filter or the dataVersion changes
   useEffect(() => {
     setIsLoading(true);
+
     const path = new URLSearchParams({
       status: statusFilter === "all" ? "" : statusFilter,
+      search: searchQuery,
     });
+
     const fetchRequest = {
       path: `/surftrust/v1/notifications?${path.toString()}`,
       headers: { "X-WP-Nonce": window.surftrust_admin_data.nonce },
     };
-    apiFetch(fetchRequest)
-      .then((data) => setNotifications(data))
-      .catch((error) => console.error("Error fetching notifications:", error))
-      .finally(() => setIsLoading(false));
-  }, [statusFilter]); // Dependency array tells React to re-run only when statusFilter changes
 
-  // This function will be passed down to each NotificationRow
-  // It allows a child component to update the parent's state.
+    apiFetch(fetchRequest)
+      .then((data) => {
+        setNotifications(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching notifications:", error);
+        setNotifications([]); // Clear notifications on error
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [statusFilter, searchQuery, dataVersion]); // Dependency array now includes all triggers
+
+  // --- HANDLER FUNCTIONS ---
+
+  // Passed to NotificationRow to optimistically update the UI on toggle
   const handleStatusChange = useCallback((id, newStatus) => {
     setNotifications((prevNotifications) =>
       prevNotifications.map((notif) =>
@@ -36,6 +56,13 @@ const App = () => {
     );
   }, []);
 
+  // Passed to ActionsMenu (via NotificationRow) to trigger a data refresh
+  const forceDataRefresh = () => {
+    // Incrementing the version number will cause the useEffect hook to re-run
+    setDataVersion((currentVersion) => currentVersion + 1);
+  };
+
+  // --- RENDER ---
   return (
     <div>
       <div className="surftrust-all-notifications-header">
@@ -53,6 +80,7 @@ const App = () => {
           activeFilter={statusFilter}
           onFilterChange={setStatusFilter}
         />
+        <SearchBar searchQuery={searchQuery} onSearch={setSearchQuery} />
       </div>
 
       {isLoading ? (
@@ -75,27 +103,24 @@ const App = () => {
               <th scope="col" className="manage-column column-stats">
                 Stats
               </th>
+              <th scope="col" className="manage-column column-actions">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {notifications.length > 0 ? (
-              notifications.map((notification) => {
-                // --- ADD THIS LOG ---
-                console.log(
-                  "App.js is sending this prop to NotificationRow:",
-                  notification
-                );
-                return (
-                  <NotificationRow
-                    key={notification.id}
-                    notification={notification}
-                    onStatusChange={handleStatusChange}
-                  />
-                );
-              })
+              notifications.map((notification) => (
+                <NotificationRow
+                  key={notification.id}
+                  notification={notification}
+                  onStatusChange={handleStatusChange}
+                  onDataUpdate={forceDataRefresh} // Pass the refresh function
+                />
+              ))
             ) : (
               <tr>
-                <td colSpan="4">No notifications found.</td>
+                <td colSpan="5">No notifications found.</td>
               </tr>
             )}
           </tbody>

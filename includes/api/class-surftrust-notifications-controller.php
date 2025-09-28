@@ -144,4 +144,29 @@ class Surftrust_Notifications_Controller
             'new_post_id' => $new_post_id
         ], 200);
     }
+    /**
+     * Deletes (trashes) a notification post.
+     *
+     * @param WP_REST_Request $request The request object, containing the post ID.
+     * @return WP_REST_Response A success or error message.
+     */
+    public function delete_notification(WP_REST_Request $request)
+    {
+        $post_id = $request->get_param('id');
+        $post = get_post($post_id);
+
+        // Security check: ensure post exists and is our CPT
+        if (! $post || $post->post_type !== 'st_notification') {
+            return new WP_REST_Response(['error' => 'Invalid notification ID.'], 404);
+        }
+
+        // Use the safe WordPress function to move the post to the trash
+        $result = wp_trash_post($post_id);
+
+        if (! $result) {
+            return new WP_REST_Response(['error' => 'Failed to delete notification.'], 500);
+        }
+
+        return new WP_REST_Response(['success' => true, 'message' => 'Notification moved to trash.'], 200);
+    }
 }

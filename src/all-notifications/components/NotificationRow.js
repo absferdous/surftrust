@@ -2,11 +2,15 @@
 
 import React from "react";
 import apiFetch from "@wordpress/api-fetch";
-// --- 1. IMPORT THE ToggleControl COMPONENT ---
 import { ToggleControl } from "@wordpress/components";
+// --- 1. IMPORT THE ActionsMenu COMPONENT ---
+import ActionsMenu from "./ActionsMenu";
+
+// --- 2. ADD 'onDataUpdate' TO THE PROPS ---
 const NotificationRow = ({
   notification,
-  onStatusChange
+  onStatusChange,
+  onDataUpdate
 }) => {
   const {
     id,
@@ -20,10 +24,7 @@ const NotificationRow = ({
   } = notification;
   const handleToggleStatus = isEnabled => {
     const newStatus = isEnabled ? "publish" : "draft";
-    // Optimistically update the UI
     onStatusChange(id, newStatus);
-
-    // Send the API request
     apiFetch({
       path: `/surftrust/v1/notifications/${id}/toggle`,
       method: "POST",
@@ -32,7 +33,7 @@ const NotificationRow = ({
       }
     }).catch(error => {
       console.error("Failed to toggle status:", error);
-      onStatusChange(id, status); // Revert on failure
+      onStatusChange(id, status);
       alert("Error: Could not update the notification status.");
     });
   };
@@ -53,6 +54,12 @@ const NotificationRow = ({
   })), /*#__PURE__*/React.createElement("td", {
     className: "stats column-stats",
     "data-colname": "Stats"
-  }, stats.views, " Views / ", stats.clicks, " Clicks"));
+  }, stats.views, " Views / ", stats.clicks, " Clicks"), /*#__PURE__*/React.createElement("td", {
+    className: "actions column-actions",
+    "data-colname": "Actions"
+  }, /*#__PURE__*/React.createElement(ActionsMenu, {
+    notification: notification,
+    onUpdate: onDataUpdate
+  })));
 };
 export default NotificationRow;

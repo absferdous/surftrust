@@ -85,6 +85,12 @@ class Surftrust_Api_Manager
             'callback' => array($notifications_controller, 'duplicate_notification'),
             'permission_callback' => array($this, 'admin_permissions_check'),
         ));
+        // Register the "Delete" endpoint
+        register_rest_route('surftrust/v1', '/notifications/(?P<id>\\d+)', array( // Note the URL structure
+            'methods'  => WP_REST_Server::DELETABLE, // This corresponds to a DELETE request
+            'callback' => array($notifications_controller, 'delete_notification'),
+            'permission_callback' => array($this, 'admin_permissions_check'),
+        ));
     }
 
     /**
