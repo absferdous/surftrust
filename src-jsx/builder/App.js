@@ -32,6 +32,7 @@ const App = () => {
   };
 
   const handleSelectTemplate = (templateSettings) => {
+    // templateSettings now contains the full combined settings object
     setSettings((prevSettings) => ({ ...prevSettings, ...templateSettings }));
     setWizardStep("main_editor");
   };

@@ -130,7 +130,21 @@
     const { type, data, settings } = campaign;
     let message = "";
     let meta = data.time_ago || "";
-    let imageUrl = data.product_image_url || null;
+    let imageUrl = null;
+    const pluginUrl = window.surftrust_globals.plugin_url || "../";
+    const fallbackIconUrl = `${pluginUrl}public/images/avatar-1.svg`;
+
+    switch (type) {
+      case "sale":
+      case "stock":
+        // For sales and stock, prioritize the product image.
+        imageUrl = data.product_image_url || fallbackIconUrl;
+        break;
+      case "review":
+        // For reviews, ALWAYS use our fallback icon to avoid showing faces.
+        imageUrl = fallbackIconUrl;
+        break;
+    }
 
     const campaignTypeSettings =
       settings[type + "_notification"] ||

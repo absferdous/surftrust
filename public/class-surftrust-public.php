@@ -50,6 +50,7 @@ class Surftrust_Public
             array(
                 'customize' => $customize_settings ?: [],
                 'api_url'  => untrailingslashit(rest_url('surftrust/v1')),
+                'plugin_url' => plugin_dir_url(dirname(__FILE__)),
             )
         );
     }
