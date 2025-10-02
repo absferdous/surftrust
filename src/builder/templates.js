@@ -81,5 +81,27 @@ export const notificationTypeDefaults = {
         threshold: 5
       }
     }
+  }],
+  cookie_notice: [{
+    id: "cookie-default",
+    name: "Standard Cookie Notice",
+    settings: {
+      cookie_notice: {
+        message: "This website uses cookies to ensure you get the best experience on our website.",
+        button_text: "Accept"
+      }
+    }
+  }],
+  growth_alert: [{
+    id: "growth-default",
+    name: "Standard Growth Alert",
+    settings: {
+      growth_alert: {
+        message: "Enjoying this? Share it with your friends!",
+        enable_facebook: true,
+        enable_twitter: true,
+        enable_pinterest: false
+      }
+    }
   }]
 };

@@ -15,6 +15,16 @@ const notificationTypes = [{
   title: "Low Stock Alert",
   description: "Notify customers when inventory is running low.",
   icon: "dashicons-warning"
+}, {
+  slug: "cookie_notice",
+  title: "Cookie Notice",
+  description: "Display a cookie consent notice for GDPR/CCPA compliance.",
+  icon: "dashicons-info"
+}, {
+  slug: "growth_alert",
+  title: "Growth Alert (Social Share)",
+  description: "Encourage visitors to share your content on social media.",
+  icon: "dashicons-share"
 }];
 const ChooseType = ({
   onSelectType

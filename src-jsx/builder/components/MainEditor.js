@@ -5,6 +5,8 @@ import SalesNotificationPanel from "./SalesNotificationPanel";
 import StockNotificationPanel from "./StockNotificationPanel";
 import ReviewNotificationPanel from "./ReviewNotificationPanel";
 import CustomizePanel from "./CustomizePanel";
+import CookieNoticePanel from "./CookieNoticePanel";
+import GrowthAlertPanel from "./GrowthAlertPanel";
 
 const MainEditor = ({ settings, setSettings }) => {
   // This state is local to the editor view
@@ -44,6 +46,20 @@ const MainEditor = ({ settings, setSettings }) => {
             updateSetting={updateSetting}
           />
         );
+      case "cookie_notice":
+        return (
+          <CookieNoticePanel
+            settings={settings.cookie_notice}
+            updateSetting={updateSetting}
+          />
+        );
+      case "growth_alert":
+        return (
+          <GrowthAlertPanel
+            settings={settings.growth_alert}
+            updateSetting={updateSetting}
+          />
+        );
       case "customize":
         return (
           <CustomizePanel
@@ -52,7 +68,11 @@ const MainEditor = ({ settings, setSettings }) => {
           />
         );
       default:
-        return <div>Please select a valid tab.</div>;
+        return (
+          <div className="surftrust-panel">
+            Please select a notification type.
+          </div>
+        );
     }
   };
 

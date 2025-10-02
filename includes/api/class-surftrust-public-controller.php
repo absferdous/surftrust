@@ -55,6 +55,10 @@ class Surftrust_Public_Controller
                 case 'stock':
                     $data_to_add = $this->get_single_low_stock_product();
                     break;
+                case 'cookie_notice':
+                case 'growth_alert':
+                    $data_to_add = array('is_static' => true); // Pass a simple placeholder object
+                    break;
             }
 
             // If we found live data, combine it with the campaign's settings

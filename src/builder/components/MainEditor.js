@@ -5,6 +5,8 @@ import SalesNotificationPanel from "./SalesNotificationPanel";
 import StockNotificationPanel from "./StockNotificationPanel";
 import ReviewNotificationPanel from "./ReviewNotificationPanel";
 import CustomizePanel from "./CustomizePanel";
+import CookieNoticePanel from "./CookieNoticePanel";
+import GrowthAlertPanel from "./GrowthAlertPanel";
 const MainEditor = ({
   settings,
   setSettings
@@ -40,13 +42,25 @@ const MainEditor = ({
           settings: settings.review_displays,
           updateSetting: updateSetting
         });
+      case "cookie_notice":
+        return /*#__PURE__*/React.createElement(CookieNoticePanel, {
+          settings: settings.cookie_notice,
+          updateSetting: updateSetting
+        });
+      case "growth_alert":
+        return /*#__PURE__*/React.createElement(GrowthAlertPanel, {
+          settings: settings.growth_alert,
+          updateSetting: updateSetting
+        });
       case "customize":
         return /*#__PURE__*/React.createElement(CustomizePanel, {
           settings: settings.customize,
           updateSetting: updateSetting
         });
       default:
-        return /*#__PURE__*/React.createElement("div", null, "Please select a valid tab.");
+        return /*#__PURE__*/React.createElement("div", {
+          className: "surftrust-panel"
+        }, "Please select a notification type.");
     }
   };
 
