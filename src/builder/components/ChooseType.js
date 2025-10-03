@@ -25,6 +25,11 @@ const notificationTypes = [{
   title: "Growth Alert (Social Share)",
   description: "Encourage visitors to share your content on social media.",
   icon: "dashicons-share"
+}, {
+  slug: "live_visitors",
+  title: "Live Visitor Count",
+  description: "Show how many people are currently browsing your site to build buzz.",
+  icon: "dashicons-groups"
 }];
 const ChooseType = ({
   onSelectType

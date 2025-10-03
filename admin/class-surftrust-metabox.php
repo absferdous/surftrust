@@ -115,7 +115,9 @@ class Surftrust_Metabox
             $sanitized_settings['growth_alert']['enable_twitter'] = ! empty($raw_data['growth_alert']['enable_twitter']);
             $sanitized_settings['growth_alert']['enable_pinterest'] = ! empty($raw_data['growth_alert']['enable_pinterest']);
         }
-
+        if ($type === 'live_visitors' && isset($raw_data['live_visitors'])) {
+            $sanitized_settings['live_visitors']['message'] = sanitize_textarea_field($raw_data['live_visitors']['message']);
+        }
         // Sanitize all 'customize' settings if they exist.
         if (isset($raw_data['customize']) && is_array($raw_data['customize'])) {
             foreach ($raw_data['customize'] as $key => $value) {

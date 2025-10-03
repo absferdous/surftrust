@@ -103,5 +103,14 @@ export const notificationTypeDefaults = {
         enable_pinterest: false
       }
     }
+  }],
+  live_visitors: [{
+    id: "live-default",
+    name: "Standard Visitor Count",
+    settings: {
+      live_visitors: {
+        message: "🔥 Join {count} other shoppers right now!"
+      }
+    }
   }]
 };

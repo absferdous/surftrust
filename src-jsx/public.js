@@ -18,6 +18,15 @@
 
   let notificationQueue = [];
   let currentNotificationElement = null;
+  // --- 1. HEARTBEAT PINGER ---
+  // This function will run immediately and then every 45 seconds.
+  function sendHeartbeat() {
+    fetch(`${apiUrl}/heartbeat`, { method: "POST" }).catch((error) =>
+      console.error("Surftrust: Heartbeat failed.", error)
+    );
+  }
+  sendHeartbeat(); // Send one immediately on page load
+  setInterval(sendHeartbeat, 45000); // Send one every 45 seconds
 
   // --- 2. DATA FETCHING ---
   fetch(`${apiUrl}/public/data`)
@@ -163,17 +172,26 @@
     const pluginUrl = window.surftrust_globals.plugin_url || "../";
     const fallbackIconUrl = `${pluginUrl}public/images/avatar-1.svg`;
 
+    // 1. Define our master default templates
+    const defaultMessages = {
+      sale: "{first_name} in {city} just bought {product_name}!",
+      review: "{reviewer_name} left a {rating}-star review for {product_name}!",
+      stock: "Hurry! Only {stock_count} of {product_name} left in stock!",
+      cookie_notice:
+        "This website uses cookies to ensure you get the best experience.",
+      growth_alert: "Enjoying this page? Share it with your friends!",
+      live_visitors: "🔥 Join {count} other people right now!",
+    };
     const campaignTypeSettings =
       settings[type] ||
       settings[type + "_notification"] ||
       settings[type + "s_notification"] ||
       {};
-
     // Handle different possible structures for the message
-    message =
-      campaignTypeSettings.message ||
-      settings[type]?.message ||
-      "A new event just happened!";
+    message = campaignTypeSettings.message;
+    if (!message) {
+      message = defaultMessages[type] || "A new event just happened!";
+    }
 
     // Render based on type
     switch (type) {
@@ -205,6 +223,14 @@
         message = message.replace(
           "{product_name}",
           `<strong>${data.product_name || ""}</strong>`
+        );
+        break;
+      case "live_visitors":
+        imageUrl = fallbackIconUrl; // Use a generic icon
+        // Replace the {count} placeholder with the real count from the API
+        message = message.replace(
+          "{count}",
+          `<strong>${data.count || 1}</strong>`
         );
         break;
       case "cookie_notice": {
@@ -241,6 +267,7 @@
                     </div>
                 `;
       }
+
       default:
         return ""; // Don't render unknown types
     }
@@ -335,3 +362,4 @@
   }
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 })();
+0;

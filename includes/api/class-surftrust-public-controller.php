@@ -59,6 +59,12 @@ class Surftrust_Public_Controller
                 case 'growth_alert':
                     $data_to_add = array('is_static' => true); // Pass a simple placeholder object
                     break;
+                case 'live_visitors':
+                    // Get the current user count from the cache
+                    $live_users = wp_cache_get('surftrust_live_users', 'surftrust');
+                    $count = is_array($live_users) ? count($live_users) : 1;
+                    $data_to_add = array('count' => $count);
+                    break;
             }
 
             // If we found live data, combine it with the campaign's settings

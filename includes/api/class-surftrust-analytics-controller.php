@@ -124,6 +124,40 @@ class Surftrust_Analytics_Controller
             ]
         );
 
+
+
         return new WP_REST_Response(['success' => true], 200);
+    }
+    public function handle_heartbeat(WP_REST_Request $request)
+    {
+        $cache_key = 'surftrust_live_users';
+        $cache_group = 'surftrust';
+
+        // 1. Get or create a unique but anonymous user ID
+        $user_id = isset($_COOKIE['surftrust_user_id']) ? sanitize_key($_COOKIE['surftrust_user_id']) : wp_generate_uuid4();
+
+        // 2. Get the current list of users from the object cache
+        $live_users = wp_cache_get($cache_key, $cache_group);
+        if (! is_array($live_users)) {
+            $live_users = [];
+        }
+
+        // 3. Update this user's timestamp
+        $live_users[$user_id] = time(); // Store the current time
+
+        // 4. Filter out users who haven't sent a heartbeat in the last 3 minutes
+        $expiration_time = 3 * MINUTE_IN_SECONDS;
+        $active_users = array_filter($live_users, function ($timestamp) use ($expiration_time) {
+            return (time() - $timestamp) < $expiration_time;
+        });
+
+        // 5. Save the cleaned list back to the cache
+        wp_cache_set($cache_key, $active_users, $cache_group, $expiration_time);
+
+        // 6. Set the cookie for the user for the next request
+        setcookie('surftrust_user_id', $user_id, time() + (30 * DAY_IN_SECONDS), '/');
+
+        // 7. Return the current count
+        return new WP_REST_Response(['count' => count($active_users)], 200);
     }
 }

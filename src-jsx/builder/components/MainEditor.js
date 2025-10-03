@@ -7,6 +7,7 @@ import ReviewNotificationPanel from "./ReviewNotificationPanel";
 import CustomizePanel from "./CustomizePanel";
 import CookieNoticePanel from "./CookieNoticePanel";
 import GrowthAlertPanel from "./GrowthAlertPanel";
+import LiveVisitorPanel from "./LiveVisitorPanel";
 
 const MainEditor = ({ settings, setSettings }) => {
   // This state is local to the editor view
@@ -64,6 +65,13 @@ const MainEditor = ({ settings, setSettings }) => {
         return (
           <CustomizePanel
             settings={settings.customize}
+            updateSetting={updateSetting}
+          />
+        );
+      case "live_visitors": // <-- Add Case
+        return (
+          <LiveVisitorPanel
+            settings={settings.live_visitors}
             updateSetting={updateSetting}
           />
         );

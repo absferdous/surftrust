@@ -91,6 +91,11 @@ class Surftrust_Api_Manager
             'callback' => array($notifications_controller, 'delete_notification'),
             'permission_callback' => array($this, 'admin_permissions_check'),
         ));
+        register_rest_route('surftrust/v1', '/heartbeat', array(
+            'methods'  => WP_REST_Server::CREATABLE, // POST
+            'callback' => array($analytics_controller, 'handle_heartbeat'),
+            'permission_callback' => '__return_true', // Public
+        ));
     }
 
     /**

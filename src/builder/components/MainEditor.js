@@ -7,6 +7,7 @@ import ReviewNotificationPanel from "./ReviewNotificationPanel";
 import CustomizePanel from "./CustomizePanel";
 import CookieNoticePanel from "./CookieNoticePanel";
 import GrowthAlertPanel from "./GrowthAlertPanel";
+import LiveVisitorPanel from "./LiveVisitorPanel";
 const MainEditor = ({
   settings,
   setSettings
@@ -55,6 +56,12 @@ const MainEditor = ({
       case "customize":
         return /*#__PURE__*/React.createElement(CustomizePanel, {
           settings: settings.customize,
+          updateSetting: updateSetting
+        });
+      case "live_visitors":
+        // <-- Add Case
+        return /*#__PURE__*/React.createElement(LiveVisitorPanel, {
+          settings: settings.live_visitors,
           updateSetting: updateSetting
         });
       default:
