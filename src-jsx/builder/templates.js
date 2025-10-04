@@ -122,4 +122,15 @@ export const notificationTypeDefaults = {
       },
     },
   ],
+  sale_announcement: [
+    {
+      id: "sale-announce-default",
+      name: "Standard Sale Announcement",
+      settings: {
+        sale_announcement: {
+          message: "DEAL ALERT! Get {product_name} now for just {sale_price}!",
+        },
+      },
+    },
+  ],
 };

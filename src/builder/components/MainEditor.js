@@ -8,6 +8,7 @@ import CustomizePanel from "./CustomizePanel";
 import CookieNoticePanel from "./CookieNoticePanel";
 import GrowthAlertPanel from "./GrowthAlertPanel";
 import LiveVisitorPanel from "./LiveVisitorPanel";
+import SaleAnnouncementPanel from "./SaleAnnouncementPanel";
 const MainEditor = ({
   settings,
   setSettings
@@ -62,6 +63,12 @@ const MainEditor = ({
         // <-- Add Case
         return /*#__PURE__*/React.createElement(LiveVisitorPanel, {
           settings: settings.live_visitors,
+          updateSetting: updateSetting
+        });
+      case "sale_announcement":
+        // <-- Add Case
+        return /*#__PURE__*/React.createElement(SaleAnnouncementPanel, {
+          settings: settings.sale_announcement,
           updateSetting: updateSetting
         });
       default:

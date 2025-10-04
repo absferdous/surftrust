@@ -129,7 +129,9 @@ class Surftrust_Metabox
                 }
             }
         }
-
+if ( $type === 'sale_announcement' && isset( $raw_data['sale_announcement'] ) ) {
+    $sanitized_settings['sale_announcement']['message'] = sanitize_textarea_field( $raw_data['sale_announcement']['message'] );
+}
         // 9. Inject the Post ID into the saved data. This is crucial for analytics.
         $sanitized_settings['id'] = $post_id;
 

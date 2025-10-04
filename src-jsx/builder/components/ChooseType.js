@@ -39,6 +39,14 @@ const notificationTypes = [
       "Show how many people are currently browsing your site to build buzz.",
     icon: "dashicons-groups",
   },
+
+  {
+    slug: "sale_announcement",
+    title: "Sale Announcement",
+    description:
+      "Promote products that are currently on sale to drive traffic.",
+    icon: "dashicons-megaphone",
+  },
 ];
 
 const ChooseType = ({ onSelectType }) => {

@@ -44,8 +44,6 @@
    */
   function buildQueue(campaigns) {
     const hasConsented = document.cookie.indexOf("surftrust_cookie_consent=true") > -1;
-
-    // Filter out cookie notices if the user has already consented.
     notificationQueue = hasConsented ? campaigns.filter(c => c.type !== "cookie_notice") : campaigns;
     shuffleArray(notificationQueue);
   }
@@ -81,28 +79,22 @@
       applyStyles(notificationEl, campaign.settings);
       document.body.appendChild(notificationEl);
       currentNotificationElement = notificationEl;
-
-      // Generic click handler for campaigns that link somewhere
       const clickArea = notificationEl.querySelector(".surftrust-click-area");
       if (clickArea) {
         clickArea.addEventListener("click", e => {
-          // Don't prevent default for social links
           if (campaign.type !== "growth_alert") {
             e.preventDefault();
           }
           handleNotificationClick(campaign);
         });
       }
-
-      // Special logic for cookie notice button
       if (campaign.type === "cookie_notice") {
         const acceptBtn = notificationEl.querySelector(".surftrust-cookie-accept");
         if (acceptBtn) {
           acceptBtn.addEventListener("click", () => {
             const d = new Date();
-            d.setTime(d.getTime() + 30 * 24 * 60 * 60 * 1000); // Expires in 30 days
-            let expires = "expires=" + d.toUTCString();
-            document.cookie = "surftrust_cookie_consent=true;" + expires + ";path=/";
+            d.setTime(d.getTime() + 30 * 24 * 60 * 60 * 1000);
+            document.cookie = "surftrust_cookie_consent=true;expires=" + d.toUTCString() + ";path=/";
             hideNotification();
           });
         }
@@ -117,6 +109,7 @@
       setTimeout(() => {
         notificationEl.classList.add("is-visible");
         trackEvent("view", campaign);
+        initializeCountdown(notificationEl); // Start countdown if it exists
         resolve();
       }, 100);
     });
@@ -125,6 +118,10 @@
     return new Promise(resolve => {
       if (currentNotificationElement) {
         const el = currentNotificationElement;
+        // Clear any running countdown timers before hiding
+        if (el.dataset.countdownInterval) {
+          clearInterval(parseInt(el.dataset.countdownInterval, 10));
+        }
         el.classList.remove("is-visible");
         setTimeout(() => {
           el.remove();
@@ -149,24 +146,8 @@
     let imageUrl = null;
     const pluginUrl = window.surftrust_globals.plugin_url || "../";
     const fallbackIconUrl = `${pluginUrl}public/images/avatar-1.svg`;
-
-    // 1. Define our master default templates
-    const defaultMessages = {
-      sale: "{first_name} in {city} just bought {product_name}!",
-      review: "{reviewer_name} left a {rating}-star review for {product_name}!",
-      stock: "Hurry! Only {stock_count} of {product_name} left in stock!",
-      cookie_notice: "This website uses cookies to ensure you get the best experience.",
-      growth_alert: "Enjoying this page? Share it with your friends!",
-      live_visitors: "🔥 Join {count} other people right now!"
-    };
-    const campaignTypeSettings = settings[type] || settings[type + "_notification"] || settings[type + "s_notification"] || {};
-    // Handle different possible structures for the message
-    message = campaignTypeSettings.message;
-    if (!message) {
-      message = defaultMessages[type] || "A new event just happened!";
-    }
-
-    // Render based on type
+    const campaignTypeSettings = settings[type] || settings[type + "_announcement"] || settings[type + "_notification"] || settings[type + "s_notification"] || {};
+    message = campaignTypeSettings.message || "Default Message";
     switch (type) {
       case "sale":
       case "stock":
@@ -178,49 +159,48 @@
         if (type === "stock") meta = "Limited stock available";
         break;
       case "review":
-        imageUrl = fallbackIconUrl; // Always use fallback for reviews
+        imageUrl = fallbackIconUrl;
         message = message.replace("{reviewer_name}", data.reviewer_name || "A customer");
         message = message.replace("{rating}", data.rating || "5");
         message = message.replace("{product_name}", `<strong>${data.product_name || ""}</strong>`);
         break;
       case "live_visitors":
-        imageUrl = fallbackIconUrl; // Use a generic icon
-        // Replace the {count} placeholder with the real count from the API
+        imageUrl = fallbackIconUrl;
         message = message.replace("{count}", `<strong>${data.count || 1}</strong>`);
         break;
+      case "sale_announcement":
+        {
+          imageUrl = data.product_image_url || fallbackIconUrl;
+          meta = ""; // No meta for this type
+          message = message.replace("{product_name}", `<strong>${data.product_name || ""}</strong>`);
+          message = message.replace("{sale_price}", data.sale_price || "");
+          message = message.replace("{regular_price}", `<del>${data.regular_price || ""}</del>`);
+          message = message.replace("{discount_percentage}", data.discount_percentage || "0");
+
+          // Add placeholder for countdown timer if sale has an end date
+          if (data.sale_end_date) {
+            message += `<div class="surftrust-countdown-timer" data-end-time="${data.sale_end_date}"></div>`;
+          }
+          break;
+        }
       case "cookie_notice":
         {
           const buttonText = campaignTypeSettings.button_text || "Accept";
-          return `
-                    <div class="surftrust-notification-wrapper">
-                        <div class="surftrust-content">
-                            <p>${message}</p>
-                            <button class="surftrust-cookie-accept button">${buttonText}</button>
-                        </div>
-                    </div>
-                `;
+          return `<div class="surftrust-notification-wrapper"><div class="surftrust-content"><p>${message}</p><button class="surftrust-cookie-accept button">${buttonText}</button></div></div>`;
         }
       case "growth_alert":
         {
           const currentPageUrl = encodeURIComponent(window.location.href);
           const currentPageTitle = encodeURIComponent(document.title);
           let socialLinks = '<div style="display: flex; gap: 10px; margin-top: 10px;">';
-          if (campaignTypeSettings.enable_facebook) socialLinks += `<a href="https://www.facebook.com/sharer/sharer.php?u=${currentPageUrl}" target="_blank" class="surftrust-social-link">Facebook</a>`;
-          if (campaignTypeSettings.enable_twitter) socialLinks += `<a href="https://twitter.com/intent/tweet?url=${currentPageUrl}&text=${currentPageTitle}" target="_blank" class="surftrust-social-link">X/Twitter</a>`;
-          if (campaignTypeSettings.enable_pinterest) socialLinks += `<a href="https://pinterest.com/pin/create/button/?url=${currentPageUrl}&media=&description=${currentPageTitle}" target="_blank" class="surftrust-social-link">Pinterest</a>`;
+          if (campaignTypeSettings.enable_facebook) socialLinks += `<a href="https://www.facebook.com/sharer/sharer.php?u=${currentPageUrl}" target="_blank">Facebook</a>`;
+          if (campaignTypeSettings.enable_twitter) socialLinks += `<a href="https://twitter.com/intent/tweet?url=${currentPageUrl}&text=${currentPageTitle}" target="_blank">X/Twitter</a>`;
+          if (campaignTypeSettings.enable_pinterest) socialLinks += `<a href="https://pinterest.com/pin/create/button/?url=${currentPageUrl}&media=&description=${currentPageTitle}" target="_blank">Pinterest</a>`;
           socialLinks += "</div>";
-          return `
-                    <div class="surftrust-notification-wrapper">
-                        <div class="surftrust-content">
-                            <p>${message}</p>
-                            ${socialLinks}
-                        </div>
-                    </div>
-                `;
+          return `<div class="surftrust-notification-wrapper"><div class="surftrust-content"><p>${message}</p>${socialLinks}</div></div>`;
         }
       default:
         return "";
-      // Don't render unknown types
     }
     const closeBtnHtml = globalCustomize.show_close_button ? `<button class="surftrust-close-btn">&times;</button>` : "";
     const imageHtml = imageUrl ? `<div class="surftrust-image"><img src="${imageUrl}" alt="Notification Icon"></div>` : "";
@@ -282,6 +262,31 @@
       },
       body: JSON.stringify(payload)
     }).catch(err => console.error(`Surftrust: Failed to track ${eventType}`, err));
+  }
+
+  /**
+   * Finds and initializes any countdown timers in a notification.
+   */
+  function initializeCountdown(notificationEl) {
+    const timerEl = notificationEl.querySelector(".surftrust-countdown-timer");
+    if (!timerEl) return;
+    const endTime = parseInt(timerEl.dataset.endTime, 10) * 1000;
+    if (isNaN(endTime) || !endTime) return;
+    const intervalId = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = endTime - now;
+      if (distance < 0) {
+        clearInterval(intervalId);
+        timerEl.innerHTML = "Sale has ended!";
+        return;
+      }
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(distance % (1000 * 60 * 60 * 24) / (1000 * 60 * 60));
+      const minutes = Math.floor(distance % (1000 * 60 * 60) / (1000 * 60));
+      const seconds = Math.floor(distance % (1000 * 60) / 1000);
+      timerEl.innerHTML = `Sale ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+    notificationEl.dataset.countdownInterval = intervalId;
   }
 
   // --- 6. HELPER FUNCTIONS ---

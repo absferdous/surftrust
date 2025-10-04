@@ -65,6 +65,9 @@ class Surftrust_Public_Controller
                     $count = is_array($live_users) ? count($live_users) : 1;
                     $data_to_add = array('count' => $count);
                     break;
+                case 'sale_announcement':
+                    $data_to_add = $this->get_single_sale_announcement_product();
+                    break;
             }
 
             // If we found live data, combine it with the campaign's settings
@@ -191,5 +194,46 @@ class Surftrust_Public_Controller
         }
 
         return $products;
+    }
+    // In class-surftrust-public-controller.php
+
+    /**
+     * Fetches data for one random, currently on-sale product.
+     * @return array|false Product data or false if none found.
+     */
+    private function get_single_sale_announcement_product()
+    {
+        // wc_get_product_ids_on_sale() is the most efficient way to get sale items.
+        $sale_product_ids = wc_get_product_ids_on_sale();
+
+        if (empty($sale_product_ids)) {
+            return false;
+        }
+
+        // Pick one random product from the list of sale items.
+        $random_product_id = $sale_product_ids[array_rand($sale_product_ids)];
+        $product = wc_get_product($random_product_id);
+
+        if (! $product) {
+            return false;
+        }
+
+        $regular_price = (float) $product->get_regular_price();
+        $sale_price = (float) $product->get_sale_price();
+        $discount = 0;
+        if ($regular_price > 0) {
+            $discount = round((($regular_price - $sale_price) / $regular_price) * 100);
+        }
+
+        return [
+            'product_name'        => $product->get_name(),
+            'product_id'          => $product->get_id(),
+            'product_url'         => $product->get_permalink(),
+            'product_image_url'   => wp_get_attachment_image_url($product->get_image_id(), 'thumbnail'),
+            'regular_price'       => wc_price($regular_price),
+            'sale_price'          => wc_price($sale_price),
+            'discount_percentage' => $discount,
+            'sale_end_date'       => $product->get_date_on_sale_to() ? $product->get_date_on_sale_to()->getTimestamp() : null,
+        ];
     }
 }
