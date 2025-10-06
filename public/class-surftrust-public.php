@@ -43,6 +43,10 @@ class Surftrust_Public
         $table_name = $wpdb->prefix . 'surftrust_settings';
         $customize_json = $wpdb->get_var("SELECT setting_value FROM $table_name WHERE setting_name = 'customize'");
         $customize_settings = json_decode($customize_json, true);
+        $current_id = 0;
+        if (is_singular()) $current_id = get_the_ID();
+        if (is_front_page()) $current_id = (int) get_option('page_on_front');
+        if (function_exists('is_shop') && is_shop()) $current_id = (int) get_option('woocommerce_shop_page_id');
 
         wp_localize_script(
             $this->plugin_name,
@@ -51,6 +55,7 @@ class Surftrust_Public
                 'customize' => $customize_settings ?: [],
                 'api_url'  => untrailingslashit(rest_url('surftrust/v1')),
                 'plugin_url' => plugin_dir_url(dirname(__FILE__)),
+                'current_page_id' => $current_id,
             )
         );
     }

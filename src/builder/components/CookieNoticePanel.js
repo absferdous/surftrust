@@ -1,6 +1,7 @@
 // /src-jsx/builder/components/CookieNoticePanel.js
 import React from "react";
 import { TextControl, TextareaControl } from "@wordpress/components";
+import DisplayRules from "./DisplayRules";
 const CookieNoticePanel = ({
   settings,
   updateSetting
@@ -19,6 +20,10 @@ const CookieNoticePanel = ({
     label: "Accept Button Text",
     value: settings.button_text,
     onChange: value => updateSetting("cookie_notice", "button_text", value)
+  }), /*#__PURE__*/React.createElement(DisplayRules, {
+    settingsGroupName: "cookie_notice",
+    settings: settings.display_rules || {},
+    updateSetting: updateSetting
   }));
 };
 export default CookieNoticePanel;

@@ -15,36 +15,69 @@ class Surftrust_Public_Controller
      * @param WP_REST_Request $request The request object.
      * @return WP_REST_Response The response object with notification data.
      */
+    // In /surftrust/includes/api/class-surftrust-public-controller.php
+
+    // FINAL, CORRECTED VERSION
+
     public function get_notification_data(WP_REST_Request $request)
     {
         $notification_data = [];
-
-        // 1. Get all PUBLISHED notification posts
-        $args = array(
-            'post_type'      => 'st_notification', // Use the correct, shorter CPT name
+        $args = [
+            'post_type'      => 'st_notification',
             'post_status'    => 'publish',
-            'posts_per_page' => -1, // Get all of them
-        );
+            'posts_per_page' => -1,
+        ];
         $query = new WP_Query($args);
 
-        if (!$query->have_posts()) {
-            return new WP_REST_Response([], 200); // Return empty if no campaigns are published
+        if (! $query->have_posts()) {
+            return new WP_REST_Response([], 200);
         }
 
-        // 2. Loop through each published campaign and get its data
+        // --- Final, Robust Fix: Get the current page ID from the request parameter ---
+        $current_page_id = $request->get_param('current_page_id');
+        $current_page_id = absint($current_page_id); // Sanitize the ID to ensure it's an integer
+        // --- End Fix ---
+
         while ($query->have_posts()) {
             $query->the_post();
             $post_id = get_the_ID();
 
-            // Get all the saved settings for this specific notification
             $settings = get_post_meta($post_id, '_surftrust_settings', true);
-            if (empty($settings)) continue;
+            if (empty($settings) || empty($settings['type'])) {
+                continue;
+            }
 
-            // Get the type of notification from its settings
-            $type = isset($settings['type']) ? $settings['type'] : '';
+            $type = $settings['type'];
+
+            // --- Robustly Find and Apply Display Rules ---
+            $display_rules = null;
+            // Iterate through the settings to find the sub-array containing the display rules
+            foreach ($settings as $key => $value) {
+                if (is_array($value) && isset($value['display_rules'])) {
+                    $display_rules = $value['display_rules'];
+                    break;
+                }
+            }
+
+            if ($display_rules) {
+                // Rule 1: Enforce "Show ONLY on"
+                if (! empty($display_rules['show_on'])) {
+                    $show_on_ids = wp_list_pluck($display_rules['show_on'], 'id');
+                    if (! in_array($current_page_id, $show_on_ids)) {
+                        continue; // Skip: this notification is not for this page.
+                    }
+                }
+                // Rule 2: Enforce "Hide on"
+                if (! empty($display_rules['hide_on'])) {
+                    $hide_on_ids = wp_list_pluck($display_rules['hide_on'], 'id');
+                    if (in_array($current_page_id, $hide_on_ids)) {
+                        continue; // Skip: this notification is explicitly hidden on this page.
+                    }
+                }
+            }
+            // --- End Display Rule Enforcement ---
+
             $data_to_add = null;
-
-            // Depending on the type, fetch the relevant dynamic data
             switch ($type) {
                 case 'sale':
                     $data_to_add = $this->get_single_recent_sale();
@@ -57,10 +90,9 @@ class Surftrust_Public_Controller
                     break;
                 case 'cookie_notice':
                 case 'growth_alert':
-                    $data_to_add = array('is_static' => true); // Pass a simple placeholder object
+                    $data_to_add = array('is_static' => true);
                     break;
                 case 'live_visitors':
-                    // Get the current user count from the cache
                     $live_users = wp_cache_get('surftrust_live_users', 'surftrust');
                     $count = is_array($live_users) ? count($live_users) : 1;
                     $data_to_add = array('count' => $count);
@@ -70,13 +102,12 @@ class Surftrust_Public_Controller
                     break;
             }
 
-            // If we found live data, combine it with the campaign's settings
             if ($data_to_add) {
                 $notification_data[] = [
                     'id'       => $post_id,
                     'type'     => $type,
-                    'settings' => $settings, // The settings saved in the campaign post meta
-                    'data'     => $data_to_add,  // The live data from WooCommerce
+                    'settings' => $settings,
+                    'data'     => $data_to_add,
                 ];
             }
         }

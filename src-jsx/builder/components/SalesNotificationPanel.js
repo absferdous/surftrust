@@ -5,6 +5,7 @@ import {
   ColorPalette,
   SelectControl,
 } from "@wordpress/components";
+import DisplayRules from "./DisplayRules";
 
 const SalesNotificationPanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -87,6 +88,11 @@ const SalesNotificationPanel = ({ settings, updateSetting }) => {
           updateSetting("sales_notification", "position", value)
         }
         __nextHasNoMarginBottom
+      />
+      <DisplayRules
+        settingsGroupName="sales_notification"
+        settings={settings.display_rules || {}}
+        updateSetting={updateSetting}
       />
     </div>
   );

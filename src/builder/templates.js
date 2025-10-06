@@ -60,7 +60,8 @@ export const notificationTypeDefaults = {
     name: "Standard Sale Pop-up",
     settings: {
       sales_notification: {
-        message: "{first_name} in {city} just purchased {product_name}!"
+        message: "{first_name} in {city} just purchased {product_name}!",
+        display_rules: {}
       }
     }
   }],
@@ -70,7 +71,9 @@ export const notificationTypeDefaults = {
     settings: {
       review_displays: {
         min_rating: 4
-      }
+      },
+      message: "{reviewer_name} left a {rating}-star review for {product_name}!",
+      display_rules: {}
     }
   }],
   stock: [{
@@ -79,7 +82,8 @@ export const notificationTypeDefaults = {
     settings: {
       low_stock_alert: {
         threshold: 5
-      }
+      },
+      display_rules: {}
     }
   }],
   cookie_notice: [{
@@ -88,7 +92,8 @@ export const notificationTypeDefaults = {
     settings: {
       cookie_notice: {
         message: "This website uses cookies to ensure you get the best experience on our website.",
-        button_text: "Accept"
+        button_text: "Accept",
+        display_rules: {}
       }
     }
   }],
@@ -100,7 +105,8 @@ export const notificationTypeDefaults = {
         message: "Enjoying this? Share it with your friends!",
         enable_facebook: true,
         enable_twitter: true,
-        enable_pinterest: false
+        enable_pinterest: false,
+        display_rules: {}
       }
     }
   }],
@@ -109,7 +115,8 @@ export const notificationTypeDefaults = {
     name: "Standard Visitor Count",
     settings: {
       live_visitors: {
-        message: "🔥 Join {count} other shoppers right now!"
+        message: "🔥 Join {count} other shoppers right now!",
+        display_rules: {}
       }
     }
   }],
@@ -118,7 +125,8 @@ export const notificationTypeDefaults = {
     name: "Standard Sale Announcement",
     settings: {
       sale_announcement: {
-        message: "DEAL ALERT! Get {product_name} now for just {sale_price}!"
+        message: "DEAL ALERT! Get {product_name} now for just {sale_price}!",
+        display_rules: {}
       }
     }
   }]

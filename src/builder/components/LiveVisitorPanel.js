@@ -1,6 +1,7 @@
 // /src-jsx/builder/components/LiveVisitorPanel.js
-import React from 'react';
-import { TextareaControl } from '@wordpress/components';
+import React from "react";
+import { TextareaControl } from "@wordpress/components";
+import DisplayRules from "./DisplayRules";
 const LiveVisitorPanel = ({
   settings,
   updateSetting
@@ -14,7 +15,11 @@ const LiveVisitorPanel = ({
     label: "Notification Message",
     help: "Customize the message. Use {count} as a placeholder for the number of live visitors.",
     value: settings.message,
-    onChange: value => updateSetting('live_visitors', 'message', value)
+    onChange: value => updateSetting("live_visitors", "message", value)
+  }), /*#__PURE__*/React.createElement(DisplayRules, {
+    settingsGroupName: "live_visitors",
+    settings: settings.display_rules || {},
+    updateSetting: updateSetting
   }));
 };
 export default LiveVisitorPanel;

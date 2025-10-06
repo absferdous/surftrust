@@ -1,5 +1,6 @@
 import React from "react";
 import { ToggleControl, TextControl } from "@wordpress/components";
+import DisplayRules from "./DisplayRules";
 const StockNotificationPanel = ({
   settings,
   updateSetting
@@ -25,6 +26,10 @@ const StockNotificationPanel = ({
       const intValue = parseInt(value, 10);
       updateSetting("low_stock_alert", "threshold", isNaN(intValue) ? 0 : intValue);
     }
+  }), /*#__PURE__*/React.createElement(DisplayRules, {
+    settingsGroupName: "low_stock_alert",
+    settings: settings.display_rules || {},
+    updateSetting: updateSetting
   }));
 };
 export default StockNotificationPanel;

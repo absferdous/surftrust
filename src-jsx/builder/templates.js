@@ -62,6 +62,7 @@ export const notificationTypeDefaults = {
       settings: {
         sales_notification: {
           message: "{first_name} in {city} just purchased {product_name}!",
+          display_rules: {},
         },
       },
     },
@@ -72,6 +73,10 @@ export const notificationTypeDefaults = {
       name: "Standard Review Pop-up",
       settings: {
         review_displays: { min_rating: 4 },
+        message:
+          "{reviewer_name} left a {rating}-star review for {product_name}!",
+
+        display_rules: {},
       },
     },
   ],
@@ -81,6 +86,7 @@ export const notificationTypeDefaults = {
       name: "Standard Stock Alert",
       settings: {
         low_stock_alert: { threshold: 5 },
+        display_rules: {},
       },
     },
   ],
@@ -93,6 +99,7 @@ export const notificationTypeDefaults = {
           message:
             "This website uses cookies to ensure you get the best experience on our website.",
           button_text: "Accept",
+          display_rules: {},
         },
       },
     },
@@ -107,6 +114,7 @@ export const notificationTypeDefaults = {
           enable_facebook: true,
           enable_twitter: true,
           enable_pinterest: false,
+          display_rules: {},
         },
       },
     },
@@ -118,6 +126,7 @@ export const notificationTypeDefaults = {
       settings: {
         live_visitors: {
           message: "🔥 Join {count} other shoppers right now!",
+          display_rules: {},
         },
       },
     },
@@ -129,6 +138,7 @@ export const notificationTypeDefaults = {
       settings: {
         sale_announcement: {
           message: "DEAL ALERT! Get {product_name} now for just {sale_price}!",
+          display_rules: {},
         },
       },
     },

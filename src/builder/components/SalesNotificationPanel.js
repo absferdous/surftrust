@@ -1,5 +1,6 @@
 import React from "react";
 import { ToggleControl, TextareaControl, ColorPalette, SelectControl } from "@wordpress/components";
+import DisplayRules from "./DisplayRules";
 const SalesNotificationPanel = ({
   settings,
   updateSetting
@@ -72,6 +73,10 @@ const SalesNotificationPanel = ({
     }],
     onChange: value => updateSetting("sales_notification", "position", value),
     __nextHasNoMarginBottom: true
+  }), /*#__PURE__*/React.createElement(DisplayRules, {
+    settingsGroupName: "sales_notification",
+    settings: settings.display_rules || {},
+    updateSetting: updateSetting
   }));
 };
 export default SalesNotificationPanel;

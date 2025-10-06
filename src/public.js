@@ -10,6 +10,7 @@
   // --- 1. CONFIGURATION & STATE ---
   const globalCustomize = window.surftrust_globals.customize || {};
   const apiUrl = window.surftrust_globals.api_url;
+  const currentPageId = window.surftrust_globals.current_page_id || 0;
   let notificationQueue = [];
   let currentNotificationElement = null;
   // --- 1. HEARTBEAT PINGER ---
@@ -23,7 +24,7 @@
   setInterval(sendHeartbeat, 45000); // Send one every 45 seconds
 
   // --- 2. DATA FETCHING ---
-  fetch(`${apiUrl}/public/data`).then(response => {
+  fetch(`${apiUrl}/public/data?current_page_id=${currentPageId}`).then(response => {
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -146,8 +147,18 @@
     let imageUrl = null;
     const pluginUrl = window.surftrust_globals.plugin_url || "../";
     const fallbackIconUrl = `${pluginUrl}public/images/avatar-1.svg`;
+    const defaultMessages = {
+      sale: "{first_name} in {city} just bought {product_name}!",
+      review: "{reviewer_name} left a {rating}-star review for {product_name}!",
+      stock: "Hurry! Only {stock_count} of {product_name} left in stock!",
+      live_visitors: "join {count} vistors/vistor",
+      growth_alert: "like this ?!share on ",
+      sale_announcement: "Big sale on {product_name}",
+      cookie_notice: "this website uses cookie notices"
+      // ... (add other defaults)
+    };
     const campaignTypeSettings = settings[type] || settings[type + "_announcement"] || settings[type + "_notification"] || settings[type + "s_notification"] || {};
-    message = campaignTypeSettings.message || "Default Message";
+    message = campaignTypeSettings.message || defaultMessages[type] || "A new event just happened!";
     switch (type) {
       case "sale":
       case "stock":

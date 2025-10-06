@@ -169,4 +169,43 @@ class Surftrust_Notifications_Controller
 
         return new WP_REST_Response(['success' => true, 'message' => 'Notification moved to trash.'], 200);
     }
+    // In an appropriate admin controller class
+
+    /**
+     * A REST API endpoint to search for posts, pages, and products by title.
+     *
+     * @param WP_REST_Request $request The request object.
+     * @return WP_REST_Response A list of found posts.
+     */
+    public function search_posts_by_title(WP_REST_Request $request)
+    {
+        $search_term = $request->get_param('search');
+        if (empty($search_term)) {
+            return new WP_REST_Response([], 200);
+        }
+
+        $post_types = ['post', 'page', 'product']; // Post types to search
+        $results = [];
+
+        $query = new WP_Query([
+            's'              => sanitize_text_field($search_term),
+            'post_type'      => $post_types,
+            'posts_per_page' => 20, // Limit results
+            'post_status'    => 'publish',
+        ]);
+
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $results[] = [
+                    'id'    => get_the_ID(),
+                    'title' => get_the_title(),
+                    'type'  => get_post_type(),
+                ];
+            }
+        }
+        wp_reset_postdata();
+
+        return new WP_REST_Response($results, 200);
+    }
 }

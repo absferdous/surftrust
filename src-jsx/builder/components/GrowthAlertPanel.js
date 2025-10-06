@@ -1,7 +1,7 @@
 // /src-jsx/builder/components/GrowthAlertPanel.js
 import React from "react";
 import { TextControl, ToggleControl } from "@wordpress/components";
-
+import DisplayRules from "./DisplayRules";
 const GrowthAlertPanel = ({ settings, updateSetting }) => {
   if (!settings) {
     return null;
@@ -40,6 +40,11 @@ const GrowthAlertPanel = ({ settings, updateSetting }) => {
         onChange={(value) =>
           updateSetting("growth_alert", "enable_pinterest", value)
         }
+      />
+      <DisplayRules
+        settingsGroupName="growth_alert"
+        settings={settings.display_rules || {}}
+        updateSetting={updateSetting}
       />
     </div>
   );

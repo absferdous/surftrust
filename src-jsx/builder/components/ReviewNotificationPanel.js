@@ -1,5 +1,10 @@
 import React from "react";
-import { ToggleControl, RangeControl } from "@wordpress/components";
+import {
+  ToggleControl,
+  RangeControl,
+  TextareaControl,
+} from "@wordpress/components";
+import DisplayRules from "./DisplayRules";
 
 const ReviewNotificationPanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -36,6 +41,18 @@ const ReviewNotificationPanel = ({ settings, updateSetting }) => {
         min={1}
         max={5}
         step={1}
+      />
+      <TextareaControl
+        label="Notification Message"
+        help="Use placeholders: {reviewer_name}, {rating}, and {product_name}."
+        value={settings.message}
+        onChange={(value) => updateSetting("review_displays", "message", value)}
+        rows={3}
+      />
+      <DisplayRules
+        settingsGroupName="review_displays"
+        settings={settings.display_rules || {}}
+        updateSetting={updateSetting}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import React from "react";
 import { ToggleControl, TextControl } from "@wordpress/components";
+import DisplayRules from "./DisplayRules";
 
 const StockNotificationPanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -42,6 +43,11 @@ const StockNotificationPanel = ({ settings, updateSetting }) => {
             isNaN(intValue) ? 0 : intValue
           );
         }}
+      />
+      <DisplayRules
+        settingsGroupName="low_stock_alert"
+        settings={settings.display_rules || {}}
+        updateSetting={updateSetting}
       />
     </div>
   );
