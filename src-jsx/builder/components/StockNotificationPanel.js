@@ -1,6 +1,7 @@
 import React from "react";
 import { ToggleControl, TextControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 
 const StockNotificationPanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -49,6 +50,7 @@ const StockNotificationPanel = ({ settings, updateSetting }) => {
         settings={settings.display_rules || {}}
         updateSetting={updateSetting}
       />
+      <SaveButton />
     </div>
   );
 };

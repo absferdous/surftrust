@@ -1,6 +1,7 @@
 import React from "react";
 import { ToggleControl, RangeControl, TextareaControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 const ReviewNotificationPanel = ({
   settings,
   updateSetting
@@ -16,7 +17,7 @@ const ReviewNotificationPanel = ({
     label: "Enable Review Displays",
     help: settings.enabled ? "Review pop-ups are currently active." : "Review pop-ups are currently disabled.",
     checked: settings.enabled,
-    onChange: value => updateSetting("review_displays", "enabled", value)
+    onChange: value => updateSetting("review_displays", "message", value)
   }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(RangeControl, {
     label: "Minimum Rating to Display",
     help: "Only show reviews that have a rating of this number or higher.",
@@ -35,6 +36,6 @@ const ReviewNotificationPanel = ({
     settingsGroupName: "review_displays",
     settings: settings.display_rules || {},
     updateSetting: updateSetting
-  }));
+  }), /*#__PURE__*/React.createElement(SaveButton, null));
 };
 export default ReviewNotificationPanel;

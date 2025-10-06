@@ -1,6 +1,7 @@
 import React from "react";
 import { ToggleControl, TextControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 const StockNotificationPanel = ({
   settings,
   updateSetting
@@ -30,6 +31,6 @@ const StockNotificationPanel = ({
     settingsGroupName: "low_stock_alert",
     settings: settings.display_rules || {},
     updateSetting: updateSetting
-  }));
+  }), /*#__PURE__*/React.createElement(SaveButton, null));
 };
 export default StockNotificationPanel;

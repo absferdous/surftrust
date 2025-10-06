@@ -231,3 +231,41 @@
   margin: 0;
   color: #555;
 }
+/* /surftrust/admin/css/surftrust-admin.css */
+
+/* --- Custom Save Button Styles --- */
+
+.surftrust-save-button-wrapper {
+  margin-top: 30px; /* Add more space above the button */
+  padding-top: 20px; /* Add a line separator */
+  border-top: 1px solid #e0e0e0;
+  text-align: right; /* Keep it aligned to the right */
+}
+
+.surftrust-save-button.is-primary {
+  /* Override the default WordPress blue */
+  background: #6c5ce7 !important; /* A modern purple - !important is needed to override core styles */
+  border-color: #5d4eca !important;
+
+  /* Make it bigger and bolder */
+  padding: 8px 20px !important;
+  height: auto !important;
+  font-size: 14px !important;
+  font-weight: 600;
+
+  /* Add a subtle transition for a modern feel */
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.surftrust-save-button.is-primary:hover {
+  background: #5d4eca !important;
+  border-color: #4a3b9d !important;
+  transform: translateY(-2px); /* Add a slight "lift" on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Style the spinner when the button is busy */
+.surftrust-save-button.is-primary.is-busy .components-spinner {
+  margin: 0;
+}

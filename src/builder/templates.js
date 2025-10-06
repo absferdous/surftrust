@@ -70,10 +70,10 @@ export const notificationTypeDefaults = {
     name: "Standard Review Pop-up",
     settings: {
       review_displays: {
-        min_rating: 4
-      },
-      message: "{reviewer_name} left a {rating}-star review for {product_name}!",
-      display_rules: {}
+        min_rating: 4,
+        message: "{reviewer_name} left a {rating}-star review for {product_name}!",
+        display_rules: {}
+      }
     }
   }],
   stock: [{

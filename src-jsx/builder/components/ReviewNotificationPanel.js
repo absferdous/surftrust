@@ -5,6 +5,7 @@ import {
   TextareaControl,
 } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 
 const ReviewNotificationPanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -26,7 +27,7 @@ const ReviewNotificationPanel = ({ settings, updateSetting }) => {
             : "Review pop-ups are currently disabled."
         }
         checked={settings.enabled}
-        onChange={(value) => updateSetting("review_displays", "enabled", value)}
+        onChange={(value) => updateSetting("review_displays", "message", value)}
       />
 
       <hr />
@@ -54,6 +55,7 @@ const ReviewNotificationPanel = ({ settings, updateSetting }) => {
         settings={settings.display_rules || {}}
         updateSetting={updateSetting}
       />
+      <SaveButton />
     </div>
   );
 };

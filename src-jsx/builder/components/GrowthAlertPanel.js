@@ -2,6 +2,7 @@
 import React from "react";
 import { TextControl, ToggleControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 const GrowthAlertPanel = ({ settings, updateSetting }) => {
   if (!settings) {
     return null;
@@ -46,6 +47,7 @@ const GrowthAlertPanel = ({ settings, updateSetting }) => {
         settings={settings.display_rules || {}}
         updateSetting={updateSetting}
       />
+      <SaveButton />
     </div>
   );
 };

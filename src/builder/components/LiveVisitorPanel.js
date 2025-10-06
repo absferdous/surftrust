@@ -2,6 +2,7 @@
 import React from "react";
 import { TextareaControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 const LiveVisitorPanel = ({
   settings,
   updateSetting
@@ -20,6 +21,6 @@ const LiveVisitorPanel = ({
     settingsGroupName: "live_visitors",
     settings: settings.display_rules || {},
     updateSetting: updateSetting
-  }));
+  }), /*#__PURE__*/React.createElement(SaveButton, null));
 };
 export default LiveVisitorPanel;

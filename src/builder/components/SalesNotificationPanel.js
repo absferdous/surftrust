@@ -1,6 +1,7 @@
 import React from "react";
 import { ToggleControl, TextareaControl, ColorPalette, SelectControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 const SalesNotificationPanel = ({
   settings,
   updateSetting
@@ -77,6 +78,6 @@ const SalesNotificationPanel = ({
     settingsGroupName: "sales_notification",
     settings: settings.display_rules || {},
     updateSetting: updateSetting
-  }));
+  }), /*#__PURE__*/React.createElement(SaveButton, null));
 };
 export default SalesNotificationPanel;

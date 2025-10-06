@@ -2,6 +2,7 @@
 import React from "react";
 import { TextControl, TextareaControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 const CookieNoticePanel = ({
   settings,
   updateSetting
@@ -24,6 +25,6 @@ const CookieNoticePanel = ({
     settingsGroupName: "cookie_notice",
     settings: settings.display_rules || {},
     updateSetting: updateSetting
-  }));
+  }), /*#__PURE__*/React.createElement(SaveButton, null));
 };
 export default CookieNoticePanel;

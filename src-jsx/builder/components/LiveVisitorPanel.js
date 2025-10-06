@@ -2,6 +2,7 @@
 import React from "react";
 import { TextareaControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 
 const LiveVisitorPanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -26,6 +27,7 @@ const LiveVisitorPanel = ({ settings, updateSetting }) => {
         settings={settings.display_rules || {}}
         updateSetting={updateSetting}
       />
+      <SaveButton />
     </div>
   );
 };

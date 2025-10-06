@@ -2,6 +2,7 @@
 import React from "react";
 import { TextControl, TextareaControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 
 const CookieNoticePanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -31,6 +32,7 @@ const CookieNoticePanel = ({ settings, updateSetting }) => {
         settings={settings.display_rules || {}}
         updateSetting={updateSetting}
       />
+      <SaveButton />
     </div>
   );
 };

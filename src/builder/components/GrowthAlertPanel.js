@@ -2,6 +2,7 @@
 import React from "react";
 import { TextControl, ToggleControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 const GrowthAlertPanel = ({
   settings,
   updateSetting
@@ -32,6 +33,6 @@ const GrowthAlertPanel = ({
     settingsGroupName: "growth_alert",
     settings: settings.display_rules || {},
     updateSetting: updateSetting
-  }));
+  }), /*#__PURE__*/React.createElement(SaveButton, null));
 };
 export default GrowthAlertPanel;

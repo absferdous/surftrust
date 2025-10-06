@@ -2,6 +2,7 @@
 import React from "react";
 import { TextareaControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
 
 const SaleAnnouncementPanel = ({ settings, updateSetting }) => {
   if (!settings) {
@@ -27,6 +28,7 @@ const SaleAnnouncementPanel = ({ settings, updateSetting }) => {
         settings={settings.display_rules || {}}
         updateSetting={updateSetting}
       />
+      <SaveButton />
     </div>
   );
 };
