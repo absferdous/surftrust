@@ -1,5 +1,9 @@
 import React from "react";
-import { ToggleControl, TextControl } from "@wordpress/components";
+import {
+  ToggleControl,
+  TextControl,
+  TextareaControl,
+} from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
 import SaveButton from "../../shared/components/SaveButton";
 
@@ -30,6 +34,12 @@ const StockNotificationPanel = ({ settings, updateSetting }) => {
       />
 
       <hr />
+      <TextareaControl
+        label="Notification Message"
+        help="Customize the message. Use {product_name} and {stock_count} as placeholders."
+        value={settings.message}
+        onChange={(value) => updateSetting("low_stock_alert", "message", value)}
+      />
 
       <TextControl
         label="Stock Threshold"

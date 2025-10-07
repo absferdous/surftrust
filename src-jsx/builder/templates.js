@@ -87,8 +87,12 @@ export const notificationTypeDefaults = {
       id: "stock-default",
       name: "Standard Stock Alert",
       settings: {
-        low_stock_alert: { threshold: 5 },
-        display_rules: {},
+        low_stock_alert: {
+          threshold: 5,
+          // --- ADD THIS LINE ---
+          message: "Hurry! Only {stock_count} of {product_name} left in stock!",
+          display_rules: {},
+        },
       },
     },
   ],

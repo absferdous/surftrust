@@ -1,16 +1,22 @@
-// /src-jsx/components/customize/AdvancedDisplayRules.js
-
+// In /builder/components/customize/AdvancedDisplayRules.js
 import React from "react";
-import { ToggleControl } from "@wordpress/components";
+// --- 1. Import TextControl ---
+import { ToggleControl, TextControl } from "@wordpress/components";
 const AdvancedDisplayRules = ({
   settings,
   updateSetting
 }) => {
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h3", null, "Advanced Display Rules"), /*#__PURE__*/React.createElement(ToggleControl, {
-    label: "Enable on Mobile Devices",
-    help: settings.enable_on_mobile ? "Notifications will be shown on all devices." : "Notifications will be hidden on mobile devices.",
-    checked: settings.enable_on_mobile,
-    onChange: value => updateSetting("customize", "enable_on_mobile", value)
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h3", null, "Advanced Display Rules"), /*#__PURE__*/React.createElement(ToggleControl
+  // ... (existing mobile toggle)
+  , null), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(TextControl, {
+    label: "Frequency Capping",
+    type: "number",
+    help: "Maximum number of notifications to show a user per session. A session ends when the browser tab is closed. Set to 0 for unlimited.",
+    value: settings.max_displays_per_session,
+    onChange: value => {
+      const intValue = parseInt(value, 10);
+      updateSetting("customize", "max_displays_per_session", isNaN(intValue) ? 0 : intValue);
+    }
   }));
 };
 export default AdvancedDisplayRules;

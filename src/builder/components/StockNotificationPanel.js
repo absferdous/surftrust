@@ -1,5 +1,5 @@
 import React from "react";
-import { ToggleControl, TextControl } from "@wordpress/components";
+import { ToggleControl, TextControl, TextareaControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
 import SaveButton from "../../shared/components/SaveButton";
 const StockNotificationPanel = ({
@@ -18,7 +18,12 @@ const StockNotificationPanel = ({
     help: settings.enabled ? "Alerts are currently active." : "Alerts are currently disabled.",
     checked: settings.enabled,
     onChange: value => updateSetting("low_stock_alert", "enabled", value)
-  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(TextControl, {
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(TextareaControl, {
+    label: "Notification Message",
+    help: "Customize the message. Use {product_name} and {stock_count} as placeholders.",
+    value: settings.message,
+    onChange: value => updateSetting("low_stock_alert", "message", value)
+  }), /*#__PURE__*/React.createElement(TextControl, {
     label: "Stock Threshold",
     type: "number",
     help: "Show alert when a product's stock is at or below this number.",

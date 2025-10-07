@@ -1,9 +1,10 @@
-// /src-jsx/builder/components/GrowthAlertPanel.js
 import React from "react";
 import { TextControl, ToggleControl } from "@wordpress/components";
 import DisplayRules from "./DisplayRules";
 import SaveButton from "../../shared/components/SaveButton";
+
 const GrowthAlertPanel = ({ settings, updateSetting }) => {
+  // Safety Check: If the 'growth_alert' settings object doesn't exist, return null
   if (!settings) {
     return null;
   }
@@ -16,28 +17,28 @@ const GrowthAlertPanel = ({ settings, updateSetting }) => {
       <TextControl
         label="Main Message"
         help="The heading that encourages users to share."
-        value={settings.message}
+        value={settings.message || ""} // Add fallback for safety
         onChange={(value) => updateSetting("growth_alert", "message", value)}
       />
       <hr />
       <h3>Enabled Social Networks</h3>
       <ToggleControl
         label="Facebook"
-        checked={settings.enable_facebook}
+        checked={!!settings.enable_facebook} // Use !! to ensure it's always a boolean
         onChange={(value) =>
           updateSetting("growth_alert", "enable_facebook", value)
         }
       />
       <ToggleControl
         label="X (Twitter)"
-        checked={settings.enable_twitter}
+        checked={!!settings.enable_twitter}
         onChange={(value) =>
           updateSetting("growth_alert", "enable_twitter", value)
         }
       />
       <ToggleControl
         label="Pinterest"
-        checked={settings.enable_pinterest}
+        checked={!!settings.enable_pinterest}
         onChange={(value) =>
           updateSetting("growth_alert", "enable_pinterest", value)
         }

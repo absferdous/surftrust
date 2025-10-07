@@ -76,17 +76,16 @@ class Surftrust_Metabox
 
         // 3. Prepare Sanitized Array
         $sanitized_settings = [];
-
         if (! empty($raw_data['type'])) {
             $sanitized_settings['type'] = sanitize_text_field($raw_data['type']);
         } else {
-            return; // No type, no save.
+            return; // Exit if no type is set, as we can't sanitize properly.
         }
         $type = $sanitized_settings['type'];
 
-        // 4. Sanitize Type-Specific Settings & Display Rules
+        // 4. Sanitize All Data
 
-        // Helper function for sanitizing display_rules to avoid repetition
+        // Reusable helper function for sanitizing display_rules arrays
         $sanitize_display_rules = function ($rules_raw) {
             $sanitized = [];
             if (! empty($rules_raw['show_on']) && is_array($rules_raw['show_on'])) {
@@ -107,38 +106,51 @@ class Surftrust_Metabox
         };
 
         if ($type === 'sale' && isset($raw_data['sales_notification'])) {
-            $sanitized_settings['sales_notification']['message'] = sanitize_textarea_field($raw_data['sales_notification']['message']);
-            if (isset($raw_data['sales_notification']['display_rules'])) {
-                $sanitized_settings['sales_notification']['display_rules'] = $sanitize_display_rules($raw_data['sales_notification']['display_rules']);
+            $data_to_sanitize = $raw_data['sales_notification'];
+            $sanitized_settings['sales_notification']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
+            if (isset($data_to_sanitize['display_rules'])) {
+                $sanitized_settings['sales_notification']['display_rules'] = $sanitize_display_rules($data_to_sanitize['display_rules']);
             }
         }
         if ($type === 'review' && isset($raw_data['review_displays'])) {
-            $sanitized_settings['review_displays']['min_rating'] = absint($raw_data['review_displays']['min_rating']);
-            if (isset($raw_data['review_displays']['display_rules'])) {
-                $sanitized_settings['review_displays']['display_rules'] = $sanitize_display_rules($raw_data['review_displays']['display_rules']);
+            $data_to_sanitize = $raw_data['review_displays'];
+            $sanitized_settings['review_displays']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
+            $sanitized_settings['review_displays']['min_rating'] = absint($data_to_sanitize['min_rating']);
+            if (isset($data_to_sanitize['display_rules'])) {
+                $sanitized_settings['review_displays']['display_rules'] = $sanitize_display_rules($data_to_sanitize['display_rules']);
             }
         }
         if ($type === 'stock' && isset($raw_data['low_stock_alert'])) {
-            $sanitized_settings['low_stock_alert']['threshold'] = absint($raw_data['low_stock_alert']['threshold']);
-            if (isset($raw_data['low_stock_alert']['display_rules'])) {
-                $sanitized_settings['low_stock_alert']['display_rules'] = $sanitize_display_rules($raw_data['low_stock_alert']['display_rules']);
+            $data_to_sanitize = $raw_data['low_stock_alert'];
+            $sanitized_settings['low_stock_alert']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
+            $sanitized_settings['low_stock_alert']['threshold'] = absint($data_to_sanitize['threshold']);
+            if (isset($data_to_sanitize['display_rules'])) {
+                $sanitized_settings['low_stock_alert']['display_rules'] = $sanitize_display_rules($data_to_sanitize['display_rules']);
             }
         }
         if ($type === 'sale_announcement' && isset($raw_data['sale_announcement'])) {
-            $sanitized_settings['sale_announcement']['message'] = sanitize_textarea_field($raw_data['sale_announcement']['message']);
-            if (isset($raw_data['sale_announcement']['display_rules'])) {
-                $sanitized_settings['sale_announcement']['display_rules'] = $sanitize_display_rules($raw_data['sale_announcement']['display_rules']);
+            $data_to_sanitize = $raw_data['sale_announcement'];
+            $sanitized_settings['sale_announcement']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
+            if (isset($data_to_sanitize['display_rules'])) {
+                $sanitized_settings['sale_announcement']['display_rules'] = $sanitize_display_rules($data_to_sanitize['display_rules']);
             }
         }
-
-        // (Sanitization for cookie, growth, live_visitors remains the same as they don't have display rules yet)
-        if ($type === 'cookie_notice' && isset($raw_data['cookie_notice'])) { /* ... */
+        if ($type === 'cookie_notice' && isset($raw_data['cookie_notice'])) {
+            $data_to_sanitize = $raw_data['cookie_notice'];
+            $sanitized_settings['cookie_notice']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
+            $sanitized_settings['cookie_notice']['button_text'] = sanitize_text_field($data_to_sanitize['button_text']);
         }
-        if ($type === 'growth_alert' && isset($raw_data['growth_alert'])) { /* ... */
+        if ($type === 'growth_alert' && isset($raw_data['growth_alert'])) {
+            $data_to_sanitize = $raw_data['growth_alert'];
+            $sanitized_settings['growth_alert']['message'] = sanitize_text_field($data_to_sanitize['message']);
+            $sanitized_settings['growth_alert']['enable_facebook'] = ! empty($data_to_sanitize['enable_facebook']);
+            $sanitized_settings['growth_alert']['enable_twitter'] = ! empty($data_to_sanitize['enable_twitter']);
+            $sanitized_settings['growth_alert']['enable_pinterest'] = ! empty($data_to_sanitize['enable_pinterest']);
         }
-        if ($type === 'live_visitors' && isset($raw_data['live_visitors'])) { /* ... */
+        if ($type === 'live_visitors' && isset($raw_data['live_visitors'])) {
+            $data_to_sanitize = $raw_data['live_visitors'];
+            $sanitized_settings['live_visitors']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
         }
-
 
         // Sanitize 'customize' settings
         if (isset($raw_data['customize']) && is_array($raw_data['customize'])) {

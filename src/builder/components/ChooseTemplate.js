@@ -95,7 +95,7 @@ const ChooseTemplate = ({
 
   const selectedTheme = baseThemes[selectedThemeId];
   const notificationDefaults = notificationTypeDefaults[notificationType][0]; // Assuming only one default for now
-
+  console.log("ChooseTemplate is building finalSettings. notificationDefaults.settings is:", notificationDefaults.settings);
   // Combine base theme settings with layout settings and notification defaults
   const finalSettings = {
     type: notificationType,

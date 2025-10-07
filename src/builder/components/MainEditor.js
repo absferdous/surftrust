@@ -1,6 +1,4 @@
-// /src-jsx/builder/components/MainEditor.js
-import React, { useState } from "react";
-import SidebarNav from "./SidebarNav";
+import React from "react";
 import SalesNotificationPanel from "./SalesNotificationPanel";
 import StockNotificationPanel from "./StockNotificationPanel";
 import ReviewNotificationPanel from "./ReviewNotificationPanel";
@@ -11,22 +9,24 @@ import LiveVisitorPanel from "./LiveVisitorPanel";
 import SaleAnnouncementPanel from "./SaleAnnouncementPanel";
 const MainEditor = ({
   settings,
-  setSettings
+  setSettings,
+  activeTab,
+  setActiveTab
 }) => {
-  // This state is local to the editor view
-  const [activeTab, setActiveTab] = useState(settings.type); // Default to the notification's type
-
-  // A generic update handler that will be passed down to all panels
+  // This generic update handler is passed down to all child panels.
+  // It calls the main 'setSettings' function provided by the parent App.
   const updateSetting = (group, key, value) => {
     setSettings(prevSettings => ({
       ...prevSettings,
       [group]: {
         ...(prevSettings[group] || {}),
-        // Ensure group exists
+        // Ensure the group object exists
         [key]: value
       }
     }));
   };
+
+  // This function determines which settings panel to display based on the activeTab prop.
   const renderActivePanel = () => {
     switch (activeTab) {
       case "sale":
@@ -54,32 +54,32 @@ const MainEditor = ({
           settings: settings.growth_alert,
           updateSetting: updateSetting
         });
-      case "customize":
-        return /*#__PURE__*/React.createElement(CustomizePanel, {
-          settings: settings.customize,
-          updateSetting: updateSetting
-        });
       case "live_visitors":
-        // <-- Add Case
         return /*#__PURE__*/React.createElement(LiveVisitorPanel, {
           settings: settings.live_visitors,
           updateSetting: updateSetting
         });
       case "sale_announcement":
-        // <-- Add Case
         return /*#__PURE__*/React.createElement(SaleAnnouncementPanel, {
           settings: settings.sale_announcement,
+          updateSetting: updateSetting
+        });
+      case "customize":
+        return /*#__PURE__*/React.createElement(CustomizePanel, {
+          settings: settings.customize,
           updateSetting: updateSetting
         });
       default:
         return /*#__PURE__*/React.createElement("div", {
           className: "surftrust-panel"
-        }, "Please select a notification type.");
+        }, /*#__PURE__*/React.createElement("h2", null, "Error"), /*#__PURE__*/React.createElement("p", null, "An invalid tab was selected. Please choose a tab from the sidebar."));
     }
   };
 
-  // We need to adjust the nav items based on the notification type
-  const navItems = [{
+  // The navigation items for the builder's sidebar.
+  const navItems = [
+  // The "Content" tab's slug is dynamically set to the notification's type.
+  {
     slug: settings.type,
     title: "Content",
     icon: "dashicons-edit"
@@ -87,9 +87,7 @@ const MainEditor = ({
     slug: "customize",
     title: "Customize",
     icon: "dashicons-admin-customizer"
-  }
-  // We could add more tabs like 'Display Rules' here later
-  ];
+  }];
   return /*#__PURE__*/React.createElement("div", {
     className: "surftrust-app-wrapper"
   }, /*#__PURE__*/React.createElement("nav", {
@@ -101,6 +99,7 @@ const MainEditor = ({
     className: activeTab === item.slug ? "is-active" : "",
     onClick: e => {
       e.preventDefault();
+      // Call the function from the parent App to change the active tab
       setActiveTab(item.slug);
     }
   }, /*#__PURE__*/React.createElement("span", {

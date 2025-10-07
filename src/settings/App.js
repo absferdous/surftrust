@@ -38,7 +38,8 @@ const App = () => {
       background_color: "#ffffff",
       font_color: "#000000",
       show_close_button: true,
-      enable_on_mobile: true
+      enable_on_mobile: true,
+      max_displays_per_session: 10
     }
   });
 

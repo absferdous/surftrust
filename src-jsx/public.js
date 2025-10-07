@@ -63,11 +63,29 @@
 
   // --- 3. THE DISPLAY LOOP ---
   async function startNotificationLoop() {
+    const maxDisplays = globalCustomize.max_displays_per_session;
+    const sessionStorageKey = "surftrust_session_view_count";
+    let sessionViewCount = parseInt(
+      sessionStorage.getItem(sessionStorageKey) || "0",
+      10
+    );
     const initialDelay = (globalCustomize.initial_delay || 3) * 1000;
-    await sleep(initialDelay);
 
+    await sleep(initialDelay);
     for (const campaign of notificationQueue) {
+      // --- NEW: Check the limit before showing a notification ---
+      // If a limit is set (not 0) and we have reached it, break the loop.
+      if (maxDisplays > 0 && sessionViewCount >= maxDisplays) {
+        console.log(
+          `Surftrust: Frequency cap of ${maxDisplays} reached. Halting loop.`
+        );
+        break;
+      }
       await showNotification(campaign);
+
+      sessionViewCount++;
+      sessionStorage.setItem(sessionStorageKey, sessionViewCount);
+
       const displayDuration =
         (campaign.settings?.customize?.display_duration ??
           globalCustomize.display_duration ??
