@@ -269,3 +269,13 @@
 .surftrust-save-button.is-primary.is-busy .components-spinner {
   margin: 0;
 }
+/* In surftrust-admin.css */
+
+.surftrust-page-header {
+  margin-bottom: 20px;
+}
+
+.surftrust-page-header h1 {
+  margin: 0;
+  padding: 0;
+}

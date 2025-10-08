@@ -4,6 +4,7 @@ import React from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { ToggleControl } from "@wordpress/components";
 // --- 1. IMPORT THE ActionsMenu COMPONENT ---
+// In NotificationRow.js
 import ActionsMenu from "./ActionsMenu";
 
 // --- 2. ADD 'onDataUpdate' TO THE PROPS ---

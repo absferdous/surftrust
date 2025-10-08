@@ -3,7 +3,6 @@ import TimingSettings from "../../settings/components/customize/TimingSettings";
 import BrandingSettings from "../../settings/components/customize/BrandingSettings";
 import FontAnimationSettings from "../../settings/components/customize/FontAnimationSettings";
 import AdvancedDisplayRules from "../../settings/components/customize/AdvancedDisplayRules";
-import SaveButton from "../../shared/components/SaveButton";
 const CustomizePanel = ({ settings, updateSetting }) => {
   if (!settings) {
     return <div className="surftrust-panel">Loading...</div>;
@@ -29,7 +28,6 @@ const CustomizePanel = ({ settings, updateSetting }) => {
       />
       <hr />
       <AdvancedDisplayRules settings={settings} updateSetting={updateSetting} />
-      <SaveButton />
     </div>
   );
 };

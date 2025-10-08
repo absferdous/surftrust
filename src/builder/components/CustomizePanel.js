@@ -3,7 +3,6 @@ import TimingSettings from "../../settings/components/customize/TimingSettings";
 import BrandingSettings from "../../settings/components/customize/BrandingSettings";
 import FontAnimationSettings from "../../settings/components/customize/FontAnimationSettings";
 import AdvancedDisplayRules from "../../settings/components/customize/AdvancedDisplayRules";
-import SaveButton from "../../shared/components/SaveButton";
 const CustomizePanel = ({
   settings,
   updateSetting
@@ -27,6 +26,6 @@ const CustomizePanel = ({
   }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(AdvancedDisplayRules, {
     settings: settings,
     updateSetting: updateSetting
-  }), /*#__PURE__*/React.createElement(SaveButton, null));
+  }));
 };
 export default CustomizePanel;
