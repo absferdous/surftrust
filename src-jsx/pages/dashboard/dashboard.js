@@ -2,8 +2,8 @@
 
 import React from "react";
 import { render } from "@wordpress/element";
-import DashboardHeader from "./components/DashboardHeader";
-import StatsGrid from "./components/StatsGrid";
+import DashboardHeader from "./DashboardHeader";
+import StatsGrid from "./StatsGrid";
 const DashboardApp = () => {
   console.log("Surftrust Dashboard LOG: DashboardApp component is rendering.");
   return (

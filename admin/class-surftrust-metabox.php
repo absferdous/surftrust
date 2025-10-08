@@ -20,6 +20,7 @@ class Surftrust_Metabox
         add_action('save_post_st_notification', array($this, 'save_meta_box'));
     }
 
+
     /**
      * Add the meta box to the 'st_notification' CPT edit screen.
      */

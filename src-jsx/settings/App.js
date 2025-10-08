@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { Spinner } from "@wordpress/components";
 import Header from "../builder/components/Header";
-import CustomizePanel from "../builder/components/CustomizePanel"; // We will move this soon
+import CustomizePanel from "../builder/components/CustomizePanel";
 
 const App = () => {
   // --- STATE MANAGEMENT ---
@@ -109,14 +109,11 @@ const App = () => {
           <p>{notice}</p>
         </div>
       )}
-
       <Header
         onSave={handleSaveSettings}
         isSaving={isSaving}
         title="Global Settings"
       />
-
-      {/* --- SIMPLIFIED LAYOUT --- */}
       <CustomizePanel
         settings={settings.customize}
         updateSetting={updateSetting}

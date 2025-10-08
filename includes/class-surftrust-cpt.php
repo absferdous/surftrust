@@ -54,7 +54,7 @@ class Surftrust_CPT
             'hierarchical'          => false,
             'public'                => false, // Not visible on the public site
             'show_ui'               => true,  // Show in the admin dashboard
-            'show_in_menu'          => 'surftrust-dashboard',  // Show as a top-level menu item
+            'show_in_menu'          => false,  // Show as a top-level menu item
             'menu_position'         => 30,
             'menu_icon'             => 'dashicons-bell',
             'show_in_admin_bar'     => true,

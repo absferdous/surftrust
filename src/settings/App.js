@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { Spinner } from "@wordpress/components";
 import Header from "../builder/components/Header";
-import CustomizePanel from "../builder/components/CustomizePanel"; // We will move this soon
-
+import CustomizePanel from "../builder/components/CustomizePanel";
 const App = () => {
   // --- STATE MANAGEMENT ---
   // This app is now ONLY responsible for the 'customize' settings.

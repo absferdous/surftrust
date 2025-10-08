@@ -5,6 +5,7 @@ import App from "./App";
 
 // Find the root div we created in our PHP
 const appRoot = document.getElementById("surftrust-app-root");
+
 if (appRoot) {
-  render(/*#__PURE__*/React.createElement(App, null), appRoot);
+  render(<App />, appRoot);
 }
