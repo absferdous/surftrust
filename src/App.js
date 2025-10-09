@@ -10,7 +10,6 @@ const Dashboard = /*#__PURE__*/React.lazy(() => import("./pages/Dashboard"));
 const AllNotifications = /*#__PURE__*/React.lazy(() => import("./pages/AllNotifications"));
 const Settings = /*#__PURE__*/React.lazy(() => import("./pages/Settings"));
 const Analytics = /*#__PURE__*/React.lazy(() => import("./pages/Analytics"));
-const Builder = /*#__PURE__*/React.lazy(() => import("./pages/Builder"));
 
 // A simple component to display a spinner while pages are loading.
 const LoadingFallback = () => /*#__PURE__*/React.createElement("div", {
@@ -34,12 +33,6 @@ const App = () => {
     }), /*#__PURE__*/React.createElement(Route, {
       path: "/analytics",
       element: /*#__PURE__*/React.createElement(Analytics, null)
-    }), /*#__PURE__*/React.createElement(Route, {
-      path: "/builder/new",
-      element: /*#__PURE__*/React.createElement(Builder, null)
-    }), /*#__PURE__*/React.createElement(Route, {
-      path: "/builder/edit/:postId",
-      element: /*#__PURE__*/React.createElement(Builder, null)
     }), /*#__PURE__*/React.createElement(Route, {
       path: "*",
       element: /*#__PURE__*/React.createElement(Navigate, {

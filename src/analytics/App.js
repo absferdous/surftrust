@@ -1,6 +1,6 @@
 // /src-jsx/analytics/App.js
 import React from "react";
-import AnalyticsPanel from "./AnalyticsPanel";
+import AnalyticsPanel from "../pages/anlytics/AnalyticsPanel";
 const App = () => {
   return /*#__PURE__*/React.createElement(AnalyticsPanel, null);
 };

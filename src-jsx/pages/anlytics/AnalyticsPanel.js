@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
-import StatCard from "../shared/components/StatCard";
+import StatCard from "../../shared/components/StatCard";
 Chart.register(...registerables); // Required for Chart.js v3+
 
 // A reusable component for the stat cards

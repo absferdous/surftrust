@@ -133,28 +133,58 @@ class Surftrust_Admin
         }
     }
     // In class-surftrust-admin.php
+    // In /surftrust/admin/class-surftrust-admin.php
+
     public function enqueue_scripts($hook_suffix)
     {
-        // We only want to load our app on our main plugin page.
-        if ($hook_suffix !== 'toplevel_page_surftrust') {
-            return;
+        $screen = get_current_screen();
+
+        // --- Styles needed on ALL our pages ---
+        // Check if the current page is our main SPA page OR the CPT screen
+        if ($hook_suffix === 'toplevel_page_surftrust' || (is_object($screen) && $screen->post_type === 'st_notification')) {
+            wp_enqueue_style('wp-components');
+            wp_enqueue_style(
+                'surftrust-admin-styles',
+                plugin_dir_url(__FILE__) . 'css/surftrust-admin.css',
+                array(),
+                $this->version
+            );
         }
 
-        wp_enqueue_style('wp-components');
-        wp_enqueue_style('surftrust-admin-styles', plugin_dir_url(__FILE__) . 'css/surftrust-admin.css', [], $this->version);
+        // --- Logic for our MAIN SPA (Dashboard, Settings, Analytics) ---
+        if ($hook_suffix === 'toplevel_page_surftrust') {
+            $handle = 'surftrust-main-app';
+            wp_enqueue_script(
+                $handle,
+                plugin_dir_url(__FILE__) . '../build/app.js',
+                ['wp-element', 'wp-api-fetch', 'wp-components'],
+                filemtime(plugin_dir_path(__FILE__) . '../build/app.js'),
+                true
+            );
+            wp_localize_script($handle, 'surftrust_admin_data', [
+                'nonce' => wp_create_nonce('wp_rest'),
+                'plugin_url' => plugin_dir_url(dirname(__FILE__)),
+            ]);
+        }
 
-        $handle = 'surftrust-main-app';
-        wp_enqueue_script(
-            $handle,
-            plugin_dir_url(__FILE__) . '../build/app.js',
-            ['wp-element', 'wp-api-fetch', 'wp-components'],
-            filemtime(plugin_dir_path(__FILE__) . '../build/app.js'),
-            true
-        );
+        // --- Logic for our BUILDER APP (Add New / Edit Notification screens) ---
+        if (is_object($screen) && $screen->post_type === 'st_notification') {
+            $handle = 'surftrust-builder-app';
+            wp_enqueue_script(
+                $handle,
+                plugin_dir_url(__FILE__) . '../build/builder.js',
+                ['wp-element', 'wp-api-fetch', 'wp-components'],
+                filemtime(plugin_dir_path(__FILE__) . '../build/builder.js'),
+                true
+            );
 
-        wp_localize_script($handle, 'surftrust_admin_data', [
-            'nonce' => wp_create_nonce('wp_rest'),
-            'plugin_url' => plugin_dir_url(dirname(__FILE__)),
-        ]);
+            global $post;
+            $saved_settings = get_post_meta($post->ID, '_surftrust_settings', true);
+            wp_localize_script($handle, 'surftrust_admin_data', [
+                'nonce' => wp_create_nonce('wp_rest'),
+                'plugin_url' => plugin_dir_url(dirname(__FILE__)),
+                'settings' => is_array($saved_settings) ? $saved_settings : new stdClass(),
+            ]);
+        }
     }
 };

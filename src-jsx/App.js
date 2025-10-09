@@ -10,7 +10,6 @@ const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const AllNotifications = React.lazy(() => import("./pages/AllNotifications"));
 const Settings = React.lazy(() => import("./pages/Settings"));
 const Analytics = React.lazy(() => import("./pages/Analytics"));
-const Builder = React.lazy(() => import("./pages/Builder"));
 
 // A simple component to display a spinner while pages are loading.
 const LoadingFallback = () => (
@@ -31,10 +30,6 @@ const App = () => {
             <Route path="/all-notifications" element={<AllNotifications />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/analytics" element={<Analytics />} />
-
-            {/* The builder will handle both "add new" and "edit" */}
-            <Route path="/builder/new" element={<Builder />} />
-            <Route path="/builder/edit/:postId" element={<Builder />} />
 
             {/* Default route: redirect to the dashboard */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

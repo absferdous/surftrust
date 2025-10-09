@@ -1,3 +1,9 @@
+// /src-jsx/analytics/App.js
 import React from "react";
-const Analytics = () => <h1>Analytics Page</h1>;
+import AnalyticsPanel from "./anlytics/AnalyticsPanel";
+
+const Analytics = () => {
+  return <AnalyticsPanel />;
+};
+
 export default Analytics;
