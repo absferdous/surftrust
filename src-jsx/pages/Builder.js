@@ -13,7 +13,7 @@ const Builder = () => {
   const [builderState, setBuilderState] = useState({
     step: initialSettings.type ? "main_editor" : "choose_type",
     settings: initialSettings.type ? initialSettings : {},
-    activeTab: initialSettings.type || null,
+    activeTab: initialSettings.type || "customize", // Default to 'customize'
   });
 
   // This effect syncs the React state back to the hidden input for saving.
@@ -52,6 +52,16 @@ const Builder = () => {
     }));
   };
 
+  // --- ADD THIS NEW FUNCTION ---
+  // This function resets the state to go back to the first step.
+  const handleBackToTypeSelection = () => {
+    setBuilderState({
+      step: "choose_type",
+      settings: {}, // Clear previous settings
+      activeTab: null,
+    });
+  };
+
   const renderWizardStep = () => {
     switch (builderState.step) {
       case "main_editor":
@@ -65,6 +75,8 @@ const Builder = () => {
             setActiveTab={(tab) =>
               setBuilderState((prev) => ({ ...prev, activeTab: tab }))
             }
+            // --- PASS THE NEW FUNCTION AS A PROP ---
+            onGoBack={handleBackToTypeSelection}
           />
         );
       case "choose_template":
@@ -72,6 +84,8 @@ const Builder = () => {
           <ChooseTemplate
             notificationType={builderState.settings.type}
             onSelectTemplate={handleSelectTemplate}
+            // --- PASS THE NEW FUNCTION AS A PROP ---
+            onGoBack={handleBackToTypeSelection}
           />
         );
       case "choose_type":
@@ -80,9 +94,6 @@ const Builder = () => {
     }
   };
 
-  // The builder page doesn't need to be wrapped in our <Layout> because
-  // it's not a full page, but rather rendered inside a WordPress meta box.
-  // So the return statement is very simple.
   return (
     <div>
       {renderWizardStep()}

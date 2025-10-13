@@ -11,8 +11,6 @@ const SaleAnnouncementPanel = ({ settings, updateSetting }) => {
 
   return (
     <div className="surftrust-panel">
-      <h2>Sale Announcement Settings</h2>
-      <p>Configure the content of your sale announcement pop-up.</p>
       <hr />
       <TextareaControl
         label="Notification Message"

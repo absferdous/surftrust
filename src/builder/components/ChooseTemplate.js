@@ -88,7 +88,8 @@ const sampleNotificationData = {
 };
 const ChooseTemplate = ({
   notificationType,
-  onSelectTemplate
+  onSelectTemplate,
+  onGoBack
 }) => {
   const [selectedThemeId, setSelectedThemeId] = useState("light"); // Default selected theme
   const [selectedLayout, setSelectedLayout] = useState("card"); // Default selected layout
@@ -106,7 +107,14 @@ const ChooseTemplate = ({
       layout_style: selectedLayout
     }
   };
-  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "surftrust-wizard-navigation"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "surftrust-wizard-back-button",
+    onClick: onGoBack
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "dashicons dashicons-arrow-left-alt2"
+  }), "Back to Type Selection")), /*#__PURE__*/React.createElement("h2", {
     className: "surftrust-wizard-header"
   }, "Choose a Theme & Layout"), /*#__PURE__*/React.createElement("h3", null, "1. Select a Theme (Colors & Fonts)"), /*#__PURE__*/React.createElement("div", {
     className: "surftrust-type-grid",

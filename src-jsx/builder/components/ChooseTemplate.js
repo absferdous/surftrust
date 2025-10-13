@@ -100,7 +100,7 @@ const sampleNotificationData = {
   stock_count: 3,
 };
 
-const ChooseTemplate = ({ notificationType, onSelectTemplate }) => {
+const ChooseTemplate = ({ notificationType, onSelectTemplate, onGoBack }) => {
   const [selectedThemeId, setSelectedThemeId] = useState("light"); // Default selected theme
   const [selectedLayout, setSelectedLayout] = useState("card"); // Default selected layout
 
@@ -122,6 +122,12 @@ const ChooseTemplate = ({ notificationType, onSelectTemplate }) => {
 
   return (
     <div>
+      <div className="surftrust-wizard-navigation">
+        <button className="surftrust-wizard-back-button" onClick={onGoBack}>
+          <span className="dashicons dashicons-arrow-left-alt2"></span>
+          Back to Type Selection
+        </button>
+      </div>
       <h2 className="surftrust-wizard-header">Choose a Theme & Layout</h2>
 
       {/* --- Theme Selection --- */}

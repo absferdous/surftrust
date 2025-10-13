@@ -279,3 +279,63 @@
   margin: 0;
   padding: 0;
 }
+/* /surftrust/admin/css/surftrust-admin.css */
+
+/* --- Wizard Navigation Styles --- */
+.surftrust-wizard-navigation {
+  margin-bottom: 20px;
+}
+
+.surftrust-wizard-back-button {
+  background: none !important;
+  border: none !important;
+  color: #2271b1 !important;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.surftrust-wizard-back-button .dashicons {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.surftrust-wizard-back-button:hover {
+  color: #135e96 !important;
+}
+
+/* --- Panel Header in Builder --- */
+.surftrust-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.surftrust-panel-header h2 {
+  margin: 0;
+  font-size: 20px;
+  padding: 0;
+}
+
+.surftrust-change-type-link {
+  background: none !important;
+  border: none !important;
+  font-size: 13px;
+  font-weight: normal;
+  color: #2271b1 !important;
+  cursor: pointer;
+  padding: 0 !important;
+  text-decoration: underline;
+  box-shadow: none !important;
+}
+
+.surftrust-change-type-link:hover {
+  color: #135e96 !important;
+}

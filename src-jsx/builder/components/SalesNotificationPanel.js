@@ -24,9 +24,6 @@ const SalesNotificationPanel = ({ settings, updateSetting }) => {
 
   return (
     <div className="surftrust-panel">
-      <h2>Sales Notification Settings</h2>
-      <p>Customize the appearance of recent sales pop-ups.</p>
-
       <hr />
 
       <ToggleControl

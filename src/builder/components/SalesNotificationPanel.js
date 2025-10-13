@@ -31,7 +31,7 @@ const SalesNotificationPanel = ({
   }];
   return /*#__PURE__*/React.createElement("div", {
     className: "surftrust-panel"
-  }, /*#__PURE__*/React.createElement("h2", null, "Sales Notification Settings"), /*#__PURE__*/React.createElement("p", null, "Customize the appearance of recent sales pop-ups."), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(ToggleControl, {
+  }, /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(ToggleControl, {
     label: "Enable Sales Notifications",
     help: settings.enabled ? "Notifications are currently active." : "Notifications are currently disabled.",
     checked: settings.enabled,
