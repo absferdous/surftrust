@@ -164,6 +164,7 @@ class Surftrust_Admin
             wp_localize_script($handle, 'surftrust_admin_data', [
                 'nonce' => wp_create_nonce('wp_rest'),
                 'plugin_url' => plugin_dir_url(dirname(__FILE__)),
+                'add_new_url' => admin_url('post-new.php?post_type=st_notification'),
             ]);
         }
 

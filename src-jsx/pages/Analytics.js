@@ -1,6 +1,6 @@
 // /src-jsx/analytics/App.js
 import React from "react";
-import AnalyticsPanel from "./anlytics/AnalyticsPanel";
+import AnalyticsPanel from "./analytics/AnalyticsPanel";
 
 const Analytics = () => {
   return <AnalyticsPanel />;
