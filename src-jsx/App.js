@@ -1,6 +1,6 @@
 // /src-jsx/App.js
 import React, { Suspense } from "react";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, HashRouter } from "react-router-dom";
 import Layout from "./shared/components/Layout";
 import { Spinner } from "@wordpress/components";
 
@@ -19,6 +19,7 @@ const LoadingFallback = () => (
 );
 
 const App = () => {
+  console.log("[SurfPop Debug] The main <App /> component is rendering.");
   return (
     // We use HashRouter because it's the most reliable for WordPress admin pages.
     <HashRouter>

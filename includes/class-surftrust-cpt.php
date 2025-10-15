@@ -30,7 +30,7 @@ class Surftrust_CPT
         $labels = array(
             'name'                  => _x('Notifications', 'Post Type General Name', 'surftrust'),
             'singular_name'         => _x('Notification', 'Post Type Singular Name', 'surftrust'),
-            'menu_name'             => __('Surftrust', 'surftrust'),
+            'menu_name'             => __('SurfPop', 'surftrust'),
             'name_admin_bar'        => __('Notification', 'surftrust'),
             'archives'              => __('Notification Archives', 'surftrust'),
             'attributes'            => __('Notification Attributes', 'surftrust'),

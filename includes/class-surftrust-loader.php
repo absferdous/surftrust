@@ -71,8 +71,9 @@ class Surftrust_Loader
         add_action('admin_menu', array($plugin_admin, 'add_admin_menu'));
         // Debugging: Add an action to enqueue our admin scripts and styles.
         add_action('admin_enqueue_scripts', array($plugin_admin, 'enqueue_scripts'));
-        add_action('in_admin_header', array($plugin_admin, 'inject_global_layout_wrapper'));
-        add_action('admin_footer', array($plugin_admin, 'close_global_layout_wrapper'));
+
+        add_action('edit_form_top', array($plugin_admin, 'add_cpt_back_button'));
+        add_action('admin_menu', array($plugin_admin, 'modify_submenu_urls'), 99);
     }
 
     private function define_api_hooks()
