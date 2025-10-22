@@ -51,7 +51,7 @@
 
   // --- 3. THE DISPLAY LOOP ---
   async function startNotificationLoop() {
-    const maxDisplays = globalCustomize.max_displays_per_session;
+    const maxDisplays = globalCustomize.max_displays_per_session || 0;
     const sessionStorageKey = "surftrust_session_view_count";
     let sessionViewCount = parseInt(sessionStorage.getItem(sessionStorageKey) || "0", 10);
     const initialDelay = (globalCustomize.initial_delay || 3) * 1000;

@@ -23,6 +23,18 @@ const Builder = () => {
       settingsInput.value = JSON.stringify(builderState.settings);
     }
   }, [builderState.settings]);
+  const updateSetting = (group, key, value) => {
+    setBuilderState((prevState) => ({
+      ...prevState,
+      settings: {
+        ...prevState.settings,
+        [group]: {
+          ...(prevState.settings[group] || {}),
+          [key]: value,
+        },
+      },
+    }));
+  };
 
   const handleSelectType = (typeSlug) => {
     setBuilderState({
@@ -71,6 +83,7 @@ const Builder = () => {
             setSettings={(newSettings) =>
               setBuilderState((prev) => ({ ...prev, settings: newSettings }))
             }
+            updateSetting={updateSetting}
             activeTab={builderState.activeTab}
             setActiveTab={(tab) =>
               setBuilderState((prev) => ({ ...prev, activeTab: tab }))

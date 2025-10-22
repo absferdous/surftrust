@@ -8,18 +8,8 @@ import GrowthAlertPanel from "./GrowthAlertPanel";
 import LiveVisitorPanel from "./LiveVisitorPanel";
 import SaleAnnouncementPanel from "./SaleAnnouncementPanel";
 
-const MainEditor = ({ settings, setSettings, activeTab, setActiveTab }) => {
+const MainEditor = ({ settings, updateSetting, activeTab, setActiveTab }) => {
   // This generic update handler is passed down to all child panels.
-  // It calls the main 'setSettings' function provided by the parent App.
-  const updateSetting = (group, key, value) => {
-    setSettings((prevSettings) => ({
-      ...prevSettings,
-      [group]: {
-        ...(prevSettings[group] || {}), // Ensure the group object exists
-        [key]: value,
-      },
-    }));
-  };
 
   // This function determines which settings panel to display based on the activeTab prop.
   const renderActivePanel = () => {

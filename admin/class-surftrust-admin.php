@@ -180,16 +180,7 @@ class Surftrust_Admin
         echo '  </a>';
         echo '</div>';
     }
-    // In class-surftrust-admin.php
-
-
-    // In /admin/class-surftrust-admin.php
-
-    // In /admin/class-surftrust-admin.php
-
-    // In /admin/class-surftrust-admin.php
-
-    // In /admin/class-surftrust-admin.php
+    
 
     public function enqueue_scripts($hook_suffix)
     {
