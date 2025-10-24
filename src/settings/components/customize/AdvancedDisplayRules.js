@@ -1,22 +1,40 @@
-// In /builder/components/customize/AdvancedDisplayRules.js
+// /src-jsx/settings/components/customize/AdvancedDisplayRules.js
+
 import React from "react";
-// --- 1. Import TextControl ---
-import { ToggleControl, TextControl } from "@wordpress/components";
+import { RadioControl, TextControl } from "@wordpress/components";
 const AdvancedDisplayRules = ({
   settings,
-  updateSetting
+  updateSetting,
+  isCampaign = false
 }) => {
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h3", null, "Advanced Display Rules"), /*#__PURE__*/React.createElement(ToggleControl
-  // ... (existing mobile toggle)
-  , null), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(TextControl, {
+  const deviceOptions = [...(isCampaign ? [{
+    label: "Use Global Default",
+    value: "global"
+  }] : []), {
+    label: "Show on Desktop & Mobile",
+    value: "all"
+  }, {
+    label: "Show on Desktop Only",
+    value: "desktop"
+  }, {
+    label: "Show on Mobile Only",
+    value: "mobile"
+  }];
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h3", null, "Advanced Display Rules"), /*#__PURE__*/React.createElement(RadioControl, {
+    label: "Device Targeting",
+    help: isCampaign ? "Override the global device targeting." : "Set the default device targeting.",
+    selected: settings.device_targeting || (isCampaign ? "global" : "all"),
+    options: deviceOptions,
+    onChange: value => updateSetting("customize", "device_targeting", value)
+  }), !isCampaign && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(TextControl, {
     label: "Frequency Capping",
     type: "number",
-    help: "Maximum number of notifications to show a user per session. A session ends when the browser tab is closed. Set to 0 for unlimited.",
-    value: settings.max_displays_per_session,
+    help: "Maximum notifications to show a user per session. Set to 0 for unlimited.",
+    value: settings.max_displays_per_session || 0,
     onChange: value => {
       const intValue = parseInt(value, 10);
-      updateSetting("customize", "max_displays_per_session", isNaN(intValue) ? 0 : intValue);
+      updateSetting("customize", "max_displays_per_session", isNaN(intValue) || intValue < 0 ? 0 : intValue);
     }
-  }));
+  })));
 };
 export default AdvancedDisplayRules;

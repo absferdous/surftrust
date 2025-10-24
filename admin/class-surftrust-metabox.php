@@ -53,50 +53,55 @@ class Surftrust_Metabox
      *
      * @param int $post_id The ID of the post being saved.
      */
+    // In /admin/class-surftrust-metabox.php
+
+    // In /admin/class-surftrust-metabox.php
+
     public function save_meta_box($post_id)
     {
         // 1. Standard Security Checks
-        if (! isset($_POST['surftrust_meta_box_nonce']) || ! wp_verify_nonce($_POST['surftrust_meta_box_nonce'], 'surftrust_save_meta_box_data')) {
+        if (!isset($_POST['surftrust_meta_box_nonce']) || !wp_verify_nonce($_POST['surftrust_meta_box_nonce'], 'surftrust_save_meta_box_data')) {
             return;
         }
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
-        if (! current_user_can('edit_post', $post_id)) {
+        if (!current_user_can('edit_post', $post_id)) {
             return;
         }
-        if (! isset($_POST['_surftrust_settings'])) {
+        if (!isset($_POST['_surftrust_settings'])) {
             return;
         }
 
         // 2. Decode Data
         $raw_data = json_decode(wp_unslash($_POST['_surftrust_settings']), true);
-        if (! is_array($raw_data)) {
+        if (!is_array($raw_data)) {
             return;
         }
 
         // 3. Prepare Sanitized Array
         $sanitized_settings = [];
-        if (! empty($raw_data['type'])) {
+        if (!empty($raw_data['type'])) {
             $sanitized_settings['type'] = sanitize_text_field($raw_data['type']);
         } else {
-            return; // Exit if no type is set, as we can't sanitize properly.
+            return; // Exit if no type is set.
         }
         $type = $sanitized_settings['type'];
 
-        // 4. Sanitize All Data
+        // --- START: CORRECTED SANITIZATION LOGIC ---
 
+        // 4. Sanitize All Data
         // Reusable helper function for sanitizing display_rules arrays
         $sanitize_display_rules = function ($rules_raw) {
             $sanitized = [];
-            if (! empty($rules_raw['show_on']) && is_array($rules_raw['show_on'])) {
+            if (!empty($rules_raw['show_on']) && is_array($rules_raw['show_on'])) {
                 foreach ($rules_raw['show_on'] as $post) {
                     if (isset($post['id']) && isset($post['title'])) {
                         $sanitized['show_on'][] = ['id' => absint($post['id']), 'title' => sanitize_text_field($post['title'])];
                     }
                 }
             }
-            if (! empty($rules_raw['hide_on']) && is_array($rules_raw['hide_on'])) {
+            if (!empty($rules_raw['hide_on']) && is_array($rules_raw['hide_on'])) {
                 foreach ($rules_raw['hide_on'] as $post) {
                     if (isset($post['id']) && isset($post['title'])) {
                         $sanitized['hide_on'][] = ['id' => absint($post['id']), 'title' => sanitize_text_field($post['title'])];
@@ -106,6 +111,7 @@ class Surftrust_Metabox
             return $sanitized;
         };
 
+        // Sanitize each notification type's specific content
         if ($type === 'sale' && isset($raw_data['sales_notification'])) {
             $data_to_sanitize = $raw_data['sales_notification'];
             $sanitized_settings['sales_notification']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
@@ -144,25 +150,32 @@ class Surftrust_Metabox
         if ($type === 'growth_alert' && isset($raw_data['growth_alert'])) {
             $data_to_sanitize = $raw_data['growth_alert'];
             $sanitized_settings['growth_alert']['message'] = sanitize_text_field($data_to_sanitize['message']);
-            $sanitized_settings['growth_alert']['enable_facebook'] = ! empty($data_to_sanitize['enable_facebook']);
-            $sanitized_settings['growth_alert']['enable_twitter'] = ! empty($data_to_sanitize['enable_twitter']);
-            $sanitized_settings['growth_alert']['enable_pinterest'] = ! empty($data_to_sanitize['enable_pinterest']);
+            $sanitized_settings['growth_alert']['enable_facebook'] = !empty($data_to_sanitize['enable_facebook']);
+            $sanitized_settings['growth_alert']['enable_twitter'] = !empty($data_to_sanitize['enable_twitter']);
+            $sanitized_settings['growth_alert']['enable_pinterest'] = !empty($data_to_sanitize['enable_pinterest']);
         }
         if ($type === 'live_visitors' && isset($raw_data['live_visitors'])) {
             $data_to_sanitize = $raw_data['live_visitors'];
             $sanitized_settings['live_visitors']['message'] = sanitize_textarea_field($data_to_sanitize['message']);
         }
 
-        // Sanitize 'customize' settings
+        // Sanitize the 'customize' settings array
         if (isset($raw_data['customize']) && is_array($raw_data['customize'])) {
             foreach ($raw_data['customize'] as $key => $value) {
                 if (in_array($key, ['background_color', 'font_color'])) {
                     $sanitized_settings['customize'][$key] = sanitize_hex_color($value);
+                } elseif ($key === 'device_targeting') {
+                    $allowed_values = ['global', 'all', 'desktop', 'mobile'];
+                    if (in_array($value, $allowed_values, true)) {
+                        $sanitized_settings['customize'][$key] = $value;
+                    }
                 } else {
                     $sanitized_settings['customize'][$key] = sanitize_text_field($value);
                 }
             }
         }
+
+        // --- END: CORRECTED SANITIZATION LOGIC ---
 
         // Inject the Post ID
         $sanitized_settings['id'] = $post_id;

@@ -1,30 +1,26 @@
 // /src-jsx/pages/Settings.js
-
 import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
-import { Spinner, Button } from "@wordpress/components";
-import CustomizePanel from "../builder/components/CustomizePanel";
+import { Button, Spinner, Notice } from "@wordpress/components";
+
+// Import all the components that belong on the GLOBAL settings page
+import TimingSettings from "../settings/components/customize/TimingSettings";
+import BrandingSettings from "../settings/components/customize/BrandingSettings";
+import FontAnimationSettings from "../settings/components/customize/FontAnimationSettings";
+import AdvancedDisplayRules from "../settings/components/customize/AdvancedDisplayRules";
 const Settings = () => {
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState(null);
   useEffect(() => {
     setIsLoading(true);
-    const fetchRequest = {
-      path: "/surftrust/v1/settings",
-      headers: {
-        "X-WP-Nonce": window.surftrust_admin_data.nonce
-      }
-    };
-    apiFetch(fetchRequest).then(fetchedSettings => {
-      // We provide a default for customize to prevent errors if settings are empty
-      const fullSettings = {
-        customize: {},
-        ...fetchedSettings
-      };
-      setSettings(fullSettings);
-    }).catch(() => setNotice("Error: Could not load global settings.")).finally(() => setIsLoading(false));
+    apiFetch({
+      path: "/surftrust/v1/settings"
+    }).then(data => {
+      setSettings(data);
+      setIsLoading(false);
+    });
   }, []);
   const updateSetting = (group, key, value) => {
     setSettings(prev => ({
@@ -37,42 +33,63 @@ const Settings = () => {
   };
   const handleSave = () => {
     setIsSaving(true);
-    setNotice("");
     apiFetch({
       path: "/surftrust/v1/settings",
       method: "POST",
-      data: settings,
-      headers: {
-        "X-WP-Nonce": window.surftrust_admin_data.nonce
-      }
+      data: settings
     }).then(() => {
-      setNotice("Global settings saved successfully!");
-      setTimeout(() => setNotice(""), 3000);
-    }).catch(() => setNotice("Error: Could not save settings.")).finally(() => setIsSaving(false));
+      setIsSaving(false);
+      setNotice({
+        status: "success",
+        message: "Settings saved!"
+      });
+    }).catch(err => {
+      setIsSaving(false);
+      setNotice({
+        status: "error",
+        message: "Error saving settings."
+      });
+      console.error(err);
+    });
   };
-  if (isLoading || !settings) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "surftrust-loading-container"
-    }, /*#__PURE__*/React.createElement(Spinner, null));
+  if (isLoading) {
+    return /*#__PURE__*/React.createElement(Spinner, null);
   }
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "surftrust-page-header"
-  }, /*#__PURE__*/React.createElement("h1", null, "Global Settings")), notice && /*#__PURE__*/React.createElement("div", {
-    className: "notice notice-success is-dismissible",
     style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
       marginBottom: "20px"
     }
-  }, /*#__PURE__*/React.createElement("p", null, notice)), /*#__PURE__*/React.createElement(CustomizePanel, {
-    settings: settings.customize,
-    updateSetting: updateSetting
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "surftrust-save-button-wrapper"
-  }, /*#__PURE__*/React.createElement(Button, {
-    onClick: handleSave,
-    className: "surftrust-save-button",
+  }, /*#__PURE__*/React.createElement("h1", null, "Global Settings"), /*#__PURE__*/React.createElement(Button, {
     isPrimary: true,
     isBusy: isSaving,
-    disabled: isSaving
+    onClick: handleSave
+  }, "Save Changes")), notice && /*#__PURE__*/React.createElement(Notice, {
+    status: notice.status,
+    onRemove: () => setNotice(null),
+    isDismissible: true
+  }, notice.message), /*#__PURE__*/React.createElement("div", {
+    className: "surftrust-panel"
+  }, /*#__PURE__*/React.createElement("p", null, "These settings control the default look, feel, and behavior for all notifications site-wide."), /*#__PURE__*/React.createElement(TimingSettings, {
+    settings: settings.customize || {},
+    updateSetting: updateSetting
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(BrandingSettings, {
+    settings: settings.customize || {},
+    updateSetting: updateSetting
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(FontAnimationSettings, {
+    settings: settings.customize || {},
+    updateSetting: updateSetting
+  }), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement(AdvancedDisplayRules, {
+    settings: settings.customize || {},
+    updateSetting: updateSetting
+  })), /*#__PURE__*/React.createElement("div", {
+    class: "surftrust-save-button-wrapper"
+  }, /*#__PURE__*/React.createElement(Button, {
+    isPrimary: true,
+    isBusy: isSaving,
+    onClick: handleSave
   }, isSaving ? "Saving..." : "Save Changes")));
 };
 export default Settings;

@@ -1,33 +1,42 @@
+// /src-jsx/builder/components/CustomizePanel.js
+
 import React from "react";
-import TimingSettings from "../../settings/components/customize/TimingSettings";
+// We ONLY import the components that a campaign can override.
 import BrandingSettings from "../../settings/components/customize/BrandingSettings";
 import FontAnimationSettings from "../../settings/components/customize/FontAnimationSettings";
 import AdvancedDisplayRules from "../../settings/components/customize/AdvancedDisplayRules";
+import SaveButton from "../../shared/components/SaveButton";
+
 const CustomizePanel = ({ settings, updateSetting }) => {
+  // The 'settings' prop is the 'customize' object for this specific campaign.
   if (!settings) {
     return <div className="surftrust-panel">Loading...</div>;
   }
 
   return (
     <div className="surftrust-panel">
-      <h2>Global Customization</h2>
       <p>
-        Control the timing, appearance, and display rules for all notifications.
+        Override the default look, feel, and targeting rules for this campaign
+        only.
       </p>
 
-      <hr />
-      <TimingSettings settings={settings} updateSetting={updateSetting} />
+      {/* TimingSettings is GONE from this component. */}
 
-      <hr />
       <BrandingSettings settings={settings} updateSetting={updateSetting} />
-
       <hr />
       <FontAnimationSettings
         settings={settings}
         updateSetting={updateSetting}
       />
       <hr />
-      <AdvancedDisplayRules settings={settings} updateSetting={updateSetting} />
+      {/* We pass `isCampaign={true}` to hide the Frequency Capping option. */}
+      <AdvancedDisplayRules
+        settings={settings}
+        updateSetting={updateSetting}
+        isCampaign={true}
+      />
+
+      <SaveButton />
     </div>
   );
 };

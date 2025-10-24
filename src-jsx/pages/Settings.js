@@ -1,30 +1,26 @@
 // /src-jsx/pages/Settings.js
-
 import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
-import { Spinner, Button } from "@wordpress/components";
-import CustomizePanel from "../builder/components/CustomizePanel";
+import { Button, Spinner, Notice } from "@wordpress/components";
+
+// Import all the components that belong on the GLOBAL settings page
+import TimingSettings from "../settings/components/customize/TimingSettings";
+import BrandingSettings from "../settings/components/customize/BrandingSettings";
+import FontAnimationSettings from "../settings/components/customize/FontAnimationSettings";
+import AdvancedDisplayRules from "../settings/components/customize/AdvancedDisplayRules";
 
 const Settings = () => {
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState(null);
 
   useEffect(() => {
     setIsLoading(true);
-    const fetchRequest = {
-      path: "/surftrust/v1/settings",
-      headers: { "X-WP-Nonce": window.surftrust_admin_data.nonce },
-    };
-    apiFetch(fetchRequest)
-      .then((fetchedSettings) => {
-        // We provide a default for customize to prevent errors if settings are empty
-        const fullSettings = { customize: {}, ...fetchedSettings };
-        setSettings(fullSettings);
-      })
-      .catch(() => setNotice("Error: Could not load global settings."))
-      .finally(() => setIsLoading(false));
+    apiFetch({ path: "/surftrust/v1/settings" }).then((data) => {
+      setSettings(data);
+      setIsLoading(false);
+    });
   }, []);
 
   const updateSetting = (group, key, value) => {
@@ -36,61 +32,78 @@ const Settings = () => {
 
   const handleSave = () => {
     setIsSaving(true);
-    setNotice("");
-    apiFetch({
-      path: "/surftrust/v1/settings",
-      method: "POST",
-      data: settings,
-      headers: { "X-WP-Nonce": window.surftrust_admin_data.nonce },
-    })
+    apiFetch({ path: "/surftrust/v1/settings", method: "POST", data: settings })
       .then(() => {
-        setNotice("Global settings saved successfully!");
-        setTimeout(() => setNotice(""), 3000);
+        setIsSaving(false);
+        setNotice({ status: "success", message: "Settings saved!" });
       })
-      .catch(() => setNotice("Error: Could not save settings."))
-      .finally(() => setIsSaving(false));
+      .catch((err) => {
+        setIsSaving(false);
+        setNotice({ status: "error", message: "Error saving settings." });
+        console.error(err);
+      });
   };
 
-  if (isLoading || !settings) {
-    return (
-      <div className="surftrust-loading-container">
-        <Spinner />
-      </div>
-    );
+  if (isLoading) {
+    return <Spinner />;
   }
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="surftrust-page-header">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "20px",
+        }}
+      >
         <h1>Global Settings</h1>
+        {/* --- TOP SAVE BUTTON --- */}
+        <Button isPrimary isBusy={isSaving} onClick={handleSave}>
+          Save Changes
+        </Button>
       </div>
-
-      {/* Success/Error Notice */}
       {notice && (
-        <div
-          className="notice notice-success is-dismissible"
-          style={{ marginBottom: "20px" }}
+        <Notice
+          status={notice.status}
+          onRemove={() => setNotice(null)}
+          isDismissible
         >
-          <p>{notice}</p>
-        </div>
+          {notice.message}
+        </Notice>
       )}
 
-      {/* The Main Settings Panel */}
-      <CustomizePanel
-        settings={settings.customize}
-        updateSetting={updateSetting}
-      />
+      <div className="surftrust-panel">
+        <p>
+          These settings control the default look, feel, and behavior for all
+          notifications site-wide.
+        </p>
 
-      {/* The Save Button at the Bottom */}
-      <div className="surftrust-save-button-wrapper">
-        <Button
-          onClick={handleSave}
-          className="surftrust-save-button"
-          isPrimary
-          isBusy={isSaving}
-          disabled={isSaving}
-        >
+        <TimingSettings
+          settings={settings.customize || {}}
+          updateSetting={updateSetting}
+        />
+        <hr />
+        <BrandingSettings
+          settings={settings.customize || {}}
+          updateSetting={updateSetting}
+        />
+        <hr />
+        <FontAnimationSettings
+          settings={settings.customize || {}}
+          updateSetting={updateSetting}
+        />
+        <hr />
+        <AdvancedDisplayRules
+          settings={settings.customize || {}}
+          updateSetting={updateSetting}
+        />
+      </div>
+
+      {/* --- THIS IS THE NEW BOTTOM SAVE BUTTON --- */}
+      <div class="surftrust-save-button-wrapper">
+        <Button isPrimary isBusy={isSaving} onClick={handleSave}>
           {isSaving ? "Saving..." : "Save Changes"}
         </Button>
       </div>

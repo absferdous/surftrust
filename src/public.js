@@ -77,8 +77,41 @@
   }
 
   // --- 4. DOM MANIPULATION & RENDERING ---
+  // /src-jsx/public.js
+
+  // In /src-jsx/public.js
+
   function showNotification(campaign) {
     return new Promise(async resolve => {
+      // --- START: FINAL CORRECTED OVERRIDE LOGIC ---
+      console.log("--- DEBUG START ---");
+      console.log("Global Settings:", globalCustomize);
+      console.log("Campaign Settings:", campaign.settings.customize);
+      // 1. Get the campaign's specific rule. Default to 'global' if not set.
+      const campaignRule = campaign.settings?.customize?.device_targeting || "global";
+
+      // 2. Determine the final, effective rule.
+      let finalDeviceRule;
+      if (campaignRule !== "global") {
+        // If the campaign has a specific override ('all', 'desktop', or 'mobile'), use it.
+        finalDeviceRule = campaignRule;
+      } else {
+        // Otherwise, the campaign is set to "Use Global". Now we use the actual global setting.
+        // If the global setting doesn't exist, the ultimate fallback is 'all'.
+        finalDeviceRule = globalCustomize.device_targeting || "all";
+      }
+
+      // 3. Perform the check using the final, correct rule.
+      const isMobile = window.innerWidth <= 768;
+      if (finalDeviceRule === "desktop" && isMobile || finalDeviceRule === "mobile" && !isMobile) {
+        console.log(`SurfPop: Notification ${campaign.id} skipped due to device targeting rule: "${finalDeviceRule}"`);
+        resolve();
+        return;
+      }
+
+      // --- END: FINAL CORRECTED OVERRIDE LOGIC ---
+
+      // The rest of the function can now proceed, as we know the notification should be shown.
       if (currentNotificationElement) await hideNotification();
       const html = renderNotificationHTML(campaign);
       if (!html) {
@@ -88,6 +121,8 @@
       const wrapper = document.createElement("div");
       wrapper.innerHTML = html;
       const notificationEl = wrapper.firstElementChild;
+
+      // The applyStyles function is correct because it merges the objects internally.
       applyStyles(notificationEl, campaign.settings);
       document.body.appendChild(notificationEl);
       currentNotificationElement = notificationEl;
@@ -121,7 +156,7 @@
       setTimeout(() => {
         notificationEl.classList.add("is-visible");
         trackEvent("view", campaign);
-        initializeCountdown(notificationEl); // Start countdown if it exists
+        initializeCountdown(notificationEl);
         resolve();
       }, 100);
     });
