@@ -1,14 +1,17 @@
-// /src-jsx/all-notifications/components/NotificationRow.js
+// /src-jsx/pages/all-notifications/NotificationRow.js
 
 import React from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { ToggleControl } from "@wordpress/components";
-// --- 1. IMPORT THE ActionsMenu COMPONENT ---
-// In NotificationRow.js
-import ActionsMenu from "./ActionsMenu";
+import ActionsMenu from "./ActionsMenu"; // Adjusted path
 
-// --- 2. ADD 'onDataUpdate' TO THE PROPS ---
-const NotificationRow = ({ notification, onStatusChange, onDataUpdate }) => {
+// --- 1. Add 'mode' to the props ---
+const NotificationRow = ({
+  notification,
+  onStatusChange,
+  onDataUpdate,
+  mode = "full",
+}) => {
   const {
     id,
     title,
@@ -24,15 +27,15 @@ const NotificationRow = ({ notification, onStatusChange, onDataUpdate }) => {
     apiFetch({
       path: `/surftrust/v1/notifications/${id}/toggle`,
       method: "POST",
-      headers: { "X-WP-Nonce": window.surftrust_admin_data.nonce },
     }).catch((error) => {
       console.error("Failed to toggle status:", error);
-      onStatusChange(id, status);
+      onStatusChange(id, status); // Revert on failure
       alert("Error: Could not update the notification status.");
     });
   };
 
   const isEnabled = status === "publish";
+  const isRecentMode = mode === "recent";
 
   return (
     <tr>
@@ -47,14 +50,18 @@ const NotificationRow = ({ notification, onStatusChange, onDataUpdate }) => {
       <td className="status column-status" data-colname="Status">
         <ToggleControl checked={isEnabled} onChange={handleToggleStatus} />
       </td>
-      <td className="stats column-stats" data-colname="Stats">
-        {stats.views} Views / {stats.clicks} Clicks
-      </td>
 
-      {/* --- 3. ADD THE FINAL <td> FOR THE ACTIONS MENU --- */}
-      <td className="actions column-actions" data-colname="Actions">
-        <ActionsMenu notification={notification} onUpdate={onDataUpdate} />
-      </td>
+      {/* --- 2. Conditionally render the last two columns --- */}
+      {!isRecentMode && (
+        <td className="stats column-stats" data-colname="Stats">
+          {stats.views} Views / {stats.clicks} Clicks
+        </td>
+      )}
+      {!isRecentMode && (
+        <td className="actions column-actions" data-colname="Actions">
+          <ActionsMenu notification={notification} onUpdate={onDataUpdate} />
+        </td>
+      )}
     </tr>
   );
 };

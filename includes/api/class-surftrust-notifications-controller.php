@@ -15,45 +15,64 @@ class Surftrust_Notifications_Controller
      * @param WP_REST_Request $request The request object.
      * @return WP_REST_Response The response object with an array of notifications.
      */
+    // In /includes/api/class-surftrust-notifications-controller.php
+
     public function get_notifications(WP_REST_Request $request)
     {
+        // You can remove this error log now if you wish.
+        error_log('[SurfPop Debug] API get_notifications called. per_page param: ' . $request->get_param('per_page'));
+
         $notifications = [];
         $analytics_table = $GLOBALS['wpdb']->prefix . 'surftrust_analytics';
 
-        // 1. Prepare query arguments based on request parameters
+        // 1. Prepare query arguments with a safe default.
         $args = array(
             'post_type'      => 'st_notification',
-            'posts_per_page' => -1,
+            'posts_per_page' => -1, // Default to fetching all posts.
             'orderby'        => 'date',
             'order'          => 'DESC',
         );
 
+        // --- THIS IS THE FINAL, CORRECTED FIX ---
+
+        // 2. Get the 'per_page' parameter from the request.
+        $limit = $request->get_param('per_page');
+
+        // 3. Check if the parameter exists and is a valid, positive number.
+        // We use isset() because it correctly checks for existence, even if the value is '0'.
+        // We also sanitize it to an integer to be safe.
+        if (isset($limit) && is_numeric($limit) && (int)$limit > 0) {
+            // If it's valid, apply it to our database query arguments.
+            $args['posts_per_page'] = (int)$limit;
+        }
+
+        // --- END OF FIX ---
+
+        // Filter by status (publish/draft)
         $status_filter = $request->get_param('status');
         if (in_array($status_filter, array('publish', 'draft'))) {
             $args['post_status'] = $status_filter;
         }
 
+        // Filter by search query
         $search_query = $request->get_param('search');
-        if (! empty($search_query)) {
+        if (!empty($search_query)) {
             $args['s'] = sanitize_text_field($search_query);
         }
 
-        // 2. Execute the main query for notification posts
+        // Execute the main query for notification posts
         $query = new WP_Query($args);
 
-        if (! $query->have_posts()) {
+        if (!$query->have_posts()) {
             return new WP_REST_Response([], 200);
         }
 
-        // 3. Loop through each post and build the data object
+        // Loop through each post and build the data object
         while ($query->have_posts()) {
             $query->the_post();
             $post_id = get_the_ID();
-
             $settings = get_post_meta($post_id, '_surftrust_settings', true);
 
-            // --- THIS IS THE CRITICAL FIX ---
-            // Fetch stats for this specific notification campaign ID
             $views = (int) $GLOBALS['wpdb']->get_var($GLOBALS['wpdb']->prepare(
                 "SELECT COUNT(id) FROM $analytics_table WHERE event_type = 'view' AND notification_id = %d",
                 $post_id
@@ -62,17 +81,13 @@ class Surftrust_Notifications_Controller
                 "SELECT COUNT(id) FROM $analytics_table WHERE event_type = 'click' AND notification_id = %d",
                 $post_id
             ));
-            // --- END FIX ---
 
             $notifications[] = [
                 'id'     => $post_id,
                 'title'  => get_the_title(),
                 'status' => get_post_status(),
                 'type'   => isset($settings['type']) ? $settings['type'] : 'unknown',
-                'stats'  => [
-                    'views' => $views,
-                    'clicks' => $clicks
-                ],
+                'stats'  => ['views' => $views, 'clicks' => $clicks],
             ];
         }
         wp_reset_postdata();

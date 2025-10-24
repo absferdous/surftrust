@@ -1,17 +1,16 @@
-// /src-jsx/all-notifications/components/NotificationRow.js
+// /src-jsx/pages/all-notifications/NotificationRow.js
 
 import React from "react";
 import apiFetch from "@wordpress/api-fetch";
 import { ToggleControl } from "@wordpress/components";
-// --- 1. IMPORT THE ActionsMenu COMPONENT ---
-// In NotificationRow.js
-import ActionsMenu from "./ActionsMenu";
+import ActionsMenu from "./ActionsMenu"; // Adjusted path
 
-// --- 2. ADD 'onDataUpdate' TO THE PROPS ---
+// --- 1. Add 'mode' to the props ---
 const NotificationRow = ({
   notification,
   onStatusChange,
-  onDataUpdate
+  onDataUpdate,
+  mode = "full"
 }) => {
   const {
     id,
@@ -28,17 +27,15 @@ const NotificationRow = ({
     onStatusChange(id, newStatus);
     apiFetch({
       path: `/surftrust/v1/notifications/${id}/toggle`,
-      method: "POST",
-      headers: {
-        "X-WP-Nonce": window.surftrust_admin_data.nonce
-      }
+      method: "POST"
     }).catch(error => {
       console.error("Failed to toggle status:", error);
-      onStatusChange(id, status);
+      onStatusChange(id, status); // Revert on failure
       alert("Error: Could not update the notification status.");
     });
   };
   const isEnabled = status === "publish";
+  const isRecentMode = mode === "recent";
   return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
     className: "title column-title"
   }, /*#__PURE__*/React.createElement("strong", null, /*#__PURE__*/React.createElement("a", {
@@ -52,10 +49,10 @@ const NotificationRow = ({
   }, /*#__PURE__*/React.createElement(ToggleControl, {
     checked: isEnabled,
     onChange: handleToggleStatus
-  })), /*#__PURE__*/React.createElement("td", {
+  })), !isRecentMode && /*#__PURE__*/React.createElement("td", {
     className: "stats column-stats",
     "data-colname": "Stats"
-  }, stats.views, " Views / ", stats.clicks, " Clicks"), /*#__PURE__*/React.createElement("td", {
+  }, stats.views, " Views / ", stats.clicks, " Clicks"), !isRecentMode && /*#__PURE__*/React.createElement("td", {
     className: "actions column-actions",
     "data-colname": "Actions"
   }, /*#__PURE__*/React.createElement(ActionsMenu, {

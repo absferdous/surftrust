@@ -1,110 +1,59 @@
-// /src-jsx/components/AnalyticsPanel.js
+// /src-jsx/pages/analytics/AnalyticsPanel.js
 
 import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
-import { Line } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
+import { Spinner } from "@wordpress/components";
 import StatCard from "../../shared/components/StatCard";
-Chart.register(...registerables); // Required for Chart.js v3+
-
-// A reusable component for the stat cards
+// Assuming the new chart component is in the dashboard components folder
+import PerformanceChart from "../dashboard/PerformanceChart";
 
 const AnalyticsPanel = () => {
-  const [stats, setStats] = useState(null);
+  const [analyticsData, setAnalyticsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
-
-    // Manually create the apiFetch request with the nonce header
-    const fetchRequest = {
-      path: "/surftrust/v1/analytics",
-      method: "GET",
-      headers: {
-        // Read the nonce from the global object we created in PHP
-        "X-WP-Nonce": window.surftrust_admin_data.nonce,
-      },
-    };
-
-    apiFetch(fetchRequest)
-      .then((data) => {
-        setStats(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching analytics:", error.message, error.data);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    apiFetch({ path: "/surftrust/v1/analytics" })
+      .then((data) => setAnalyticsData(data))
+      .catch((error) => console.error("Error fetching analytics:", error))
+      .finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {
-    return <div className="surftrust-panel">Loading Analytics...</div>;
-  }
-
-  if (!stats) {
     return (
-      <div className="surftrust-panel">
-        Could not load analytics data. Please check the browser console for
-        errors.
+      <div className="surftrust-loading-container">
+        <Spinner />
       </div>
     );
   }
 
-  // Chart.js configuration
-  const chartData = {
-    labels: stats.chart.labels,
-    datasets: [
-      {
-        label: "Views",
-        data: stats.chart.views,
-        borderColor: "#6c5ce7",
-        backgroundColor: "rgba(108, 92, 231, 0.2)",
-        fill: true,
-        tension: 0.4,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    plugins: { legend: { display: false } },
-    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-  };
+  if (!analyticsData) {
+    return (
+      <div className="surftrust-panel">Could not load analytics data.</div>
+    );
+  }
 
   return (
-    <div style={{ background: "#f5f5f5", padding: "20px" }}>
-      {/* Stat Cards Section */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "20px",
-          marginBottom: "30px",
-        }}
-      >
+    <div className="surftrust-analytics-wrapper">
+      <div className="surftrust-stats-grid">
         <StatCard
           icon="dashicons-visibility"
-          value={stats.totals.views}
+          value={analyticsData.totals.views}
           label="Total Views"
         />
         <StatCard
           icon="dashicons-pointer"
-          value={stats.totals.clicks}
+          value={analyticsData.totals.clicks}
           label="Total Clicks"
         />
         <StatCard
           icon="dashicons-chart-pie"
-          value={`${stats.totals.ctr}%`}
+          value={`${analyticsData.totals.ctr}%`}
           label="Click-Through Rate"
         />
       </div>
 
-      {/* Chart Section */}
-      <div className="surftrust-panel">
-        <h3>Last 7 Days Activity</h3>
-        <Line options={chartOptions} data={chartData} />
-      </div>
+      <PerformanceChart chartData={analyticsData.chart} />
     </div>
   );
 };

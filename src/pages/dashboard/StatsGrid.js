@@ -1,31 +1,14 @@
-// /src-jsx/dashboard/components/StatsGrid.js
-import React, { useState, useEffect } from "react";
-import apiFetch from "@wordpress/api-fetch";
-import { Spinner } from "@wordpress/components";
+// /src-jsx/pages/dashboard/StatsGrid.js
+
+import React from "react";
 import StatCard from "../../shared/components/StatCard";
-const StatsGrid = () => {
-  const [stats, setStats] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    setIsLoading(true);
-    const fetchRequest = {
-      path: "/surftrust/v1/analytics",
-      headers: {
-        "X-WP-Nonce": window.surftrust_admin_data.nonce
-      }
-    };
-    apiFetch(fetchRequest).then(data => setStats(data.totals)).finally(() => setIsLoading(false));
-  }, []);
-  if (isLoading) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "surftrust-loading-container",
-      style: {
-        minHeight: "150px"
-      }
-    }, /*#__PURE__*/React.createElement(Spinner, null));
-  }
+
+// The component now receives stats as a prop instead of fetching them itself.
+const StatsGrid = ({
+  stats
+}) => {
   if (!stats) {
-    return /*#__PURE__*/React.createElement("p", null, "Could not load analytics stats.");
+    return null; // Or a loading/error state if you prefer
   }
   return /*#__PURE__*/React.createElement("div", {
     className: "surftrust-stats-grid"

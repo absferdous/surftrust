@@ -1,105 +1,48 @@
-// /src-jsx/components/AnalyticsPanel.js
+// /src-jsx/pages/analytics/AnalyticsPanel.js
 
 import React, { useState, useEffect } from "react";
 import apiFetch from "@wordpress/api-fetch";
-import { Line } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
+import { Spinner } from "@wordpress/components";
 import StatCard from "../../shared/components/StatCard";
-Chart.register(...registerables); // Required for Chart.js v3+
-
-// A reusable component for the stat cards
-
+// Assuming the new chart component is in the dashboard components folder
+import PerformanceChart from "../dashboard/PerformanceChart";
 const AnalyticsPanel = () => {
-  const [stats, setStats] = useState(null);
+  const [analyticsData, setAnalyticsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     setIsLoading(true);
-
-    // Manually create the apiFetch request with the nonce header
-    const fetchRequest = {
-      path: "/surftrust/v1/analytics",
-      method: "GET",
-      headers: {
-        // Read the nonce from the global object we created in PHP
-        "X-WP-Nonce": window.surftrust_admin_data.nonce
-      }
-    };
-    apiFetch(fetchRequest).then(data => {
-      setStats(data);
-    }).catch(error => {
-      console.error("Error fetching analytics:", error.message, error.data);
-    }).finally(() => {
-      setIsLoading(false);
-    });
+    apiFetch({
+      path: "/surftrust/v1/analytics"
+    }).then(data => setAnalyticsData(data)).catch(error => console.error("Error fetching analytics:", error)).finally(() => setIsLoading(false));
   }, []);
   if (isLoading) {
     return /*#__PURE__*/React.createElement("div", {
-      className: "surftrust-panel"
-    }, "Loading Analytics...");
+      className: "surftrust-loading-container"
+    }, /*#__PURE__*/React.createElement(Spinner, null));
   }
-  if (!stats) {
+  if (!analyticsData) {
     return /*#__PURE__*/React.createElement("div", {
       className: "surftrust-panel"
-    }, "Could not load analytics data. Please check the browser console for errors.");
+    }, "Could not load analytics data.");
   }
-
-  // Chart.js configuration
-  const chartData = {
-    labels: stats.chart.labels,
-    datasets: [{
-      label: "Views",
-      data: stats.chart.views,
-      borderColor: "#6c5ce7",
-      backgroundColor: "rgba(108, 92, 231, 0.2)",
-      fill: true,
-      tension: 0.4
-    }]
-  };
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 1
-        }
-      }
-    }
-  };
   return /*#__PURE__*/React.createElement("div", {
-    style: {
-      background: "#f5f5f5",
-      padding: "20px"
-    }
+    className: "surftrust-analytics-wrapper"
   }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: "grid",
-      gridTemplateColumns: "repeat(3, 1fr)",
-      gap: "20px",
-      marginBottom: "30px"
-    }
+    className: "surftrust-stats-grid"
   }, /*#__PURE__*/React.createElement(StatCard, {
     icon: "dashicons-visibility",
-    value: stats.totals.views,
+    value: analyticsData.totals.views,
     label: "Total Views"
   }), /*#__PURE__*/React.createElement(StatCard, {
     icon: "dashicons-pointer",
-    value: stats.totals.clicks,
+    value: analyticsData.totals.clicks,
     label: "Total Clicks"
   }), /*#__PURE__*/React.createElement(StatCard, {
     icon: "dashicons-chart-pie",
-    value: `${stats.totals.ctr}%`,
+    value: `${analyticsData.totals.ctr}%`,
     label: "Click-Through Rate"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "surftrust-panel"
-  }, /*#__PURE__*/React.createElement("h3", null, "Last 7 Days Activity"), /*#__PURE__*/React.createElement(Line, {
-    options: chartOptions,
-    data: chartData
-  })));
+  })), /*#__PURE__*/React.createElement(PerformanceChart, {
+    chartData: analyticsData.chart
+  }));
 };
 export default AnalyticsPanel;

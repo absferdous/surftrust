@@ -400,3 +400,69 @@
   height: 20px;
   width: 20px;
 }
+/* /admin/css/surftrust-admin.css */
+
+/* --- Analytics & Dashboard Styles --- */
+
+/* Wrapper for the full analytics view */
+.surftrust-analytics-wrapper {
+  background: #f0f0f1; /* A light grey background to match WP */
+  padding: 1px 20px 20px 20px; /* 1px top padding to contain margins */
+  margin: 0 -20px; /* Negative margin to break out of the standard .wrap padding */
+}
+
+/* New layout grid for the main dashboard */
+.surftrust-dashboard-layout {
+  display: grid;
+  gap: 25px;
+}
+
+/* Panel styles used on dashboard and analytics */
+.surftrust-panel {
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  padding: 20px;
+}
+
+/* Header for dashboard panels */
+.surftrust-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.surftrust-panel-header h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 1.1em;
+}
+
+/* Grid for stat cards */
+.surftrust-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 25px; /* Spacing between stats and chart */
+}
+/* This will be the main grid for the content below the stat cards */
+.surftrust-dashboard-main-grid {
+  display: grid;
+  /* Creates two columns: the first takes up 1.5fr, the second 1fr of the space */
+  grid-template-columns: 1.5fr 1fr;
+  gap: 25px;
+  align-items: start; /* Aligns items to the top of the grid cell */
+}
+/* /admin/css/surftrust-admin.css */
+
+/* --- Additions for Dashboard --- */
+
+/* Style for section headers on the dashboard */
+.surftrust-section-header {
+  font-size: 1.3em;
+  margin: 0 0 15px 0;
+  padding: 0;
+  font-weight: 600;
+}
